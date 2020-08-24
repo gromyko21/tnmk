@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+{% block title %} {{ news.title }} {% endblock %}
+{% load static %}
+{% block content %}
+    <div class="wrapper">
+        <div class="article">
+          <h1>{{ articles.title }}</h1>
+          <img style="width:200px" src="{{ articles.image.url }}">
+          <img style="width:200px" src="{{ articles.image_two.url }}">
+          <img style="width:200px" src="{{ articles.image_three.url }}">
+          <h1>{{ articles.text_article }}</h1>
+        </div>
+    </div>
+{% endblock %}

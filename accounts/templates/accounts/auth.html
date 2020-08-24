@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Авторизация{% endblock %}
+{% block link %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/registr.css' %}"/>
+{% endblock %}
+{% block content %}
+  <h2>Авторизация</h2>
+  <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+  <button type="submit">Отправить</button>
+  </form>
+{% endblock %}

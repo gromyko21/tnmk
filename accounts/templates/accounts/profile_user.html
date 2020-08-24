@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}{{ user_data.first_name }} {{ user_data.last_name }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <img src='/media/{{ user_data.image }}' alt="Не удалось загрузить" style="width:300px">
+    </div>
+    <div class="col">
+      <p>Имя пользователя: </br>{{ user_data.first_name }} {{ user_data.last_name }}</p>
+        <p>Информация о пользователе: </br>{{ user_data.bio }}</p>
+      <p>Дата рождения: </br>{{ user_data.birth_date }}</p>
+    </div>
+      <div class="col">
+  </div>
+
+{% endblock %}
