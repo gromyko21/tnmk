@@ -17,7 +17,7 @@ class Profile(models.Model):
     slug = models.SlugField(verbose_name="URL адрес", unique=True, blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True, verbose_name='Информация о человеке')
     birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
-    image = models.ImageField(null=True, blank=True, upload_to="image_profil", verbose_name='Фото профиля')
+    image = models.ImageField(null=True, blank=True, upload_to="image_profil", verbose_name='Фото профиля', default='default_photo.jpg')
 
     #def image_tag(self):
         #return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))

@@ -2,19 +2,21 @@
 {% load static %}
 {% block title %}{{ user.profile.first_name }} {{ user.profile.last_name }}{% endblock %}
 {% block content %}
+<div class="mx-auto" style="width: 45%;">
 <div class="container">
   <div class="row">
     <div class="col">
-      <img src='/media/{{ user.profile.image }}' alt="Не удалось загрузить" style="width:300px">
+      <img src='/media/{{ user.profile.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
     </div>
     <div class="col">
-      <p>Ваше имя: </br>{{ user.profile.first_name }} {{ user.profile.last_name }}</p>
+      <p>{{ user.profile.first_name }} {{ user.profile.last_name }}</p>
         <p>Информация о вас: </br>{{ user.profile.bio }}</p>
       <p>Дата рождения: </br>{{ user.profile.birth_date }}</p>
     </div>
       <div class="col">
-          <a href="{% url 'my_page_edit_url' %}">Редактировать</a>
-          <p>Ваш логин: {{ user.username}}</p>
+        <button type="button" class="btn btn-outline-primary" onclick="document.location='edit/'">Редактировать</button>
+          <p>Логин: {{ user.username}}</p>
       </div>
   </div>
+</div>
 {% endblock %}

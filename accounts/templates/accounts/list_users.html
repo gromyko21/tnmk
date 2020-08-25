@@ -1,23 +1,12 @@
 {% extends 'home/base.html' %}
 {% load static %}
-{% block title %}Домашняя страница{% endblock %}
+{% block title %}Список пользователей{% endblock %}
 {% block content %}
-<div class="container">
 {% for name in page_object.object_list %}
     <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">{{ name.title }}</h5>
-      <img src="{{ name.image.url }}" class="card-img-top" style="width:200px;">
-      <img src="{{ name.image_two.url }}" class="card-img-top" style="width:200px;">
-      <img src="{{ name.image_three.url }}" class="card-img-top" style="width:200px;">
-      <div class="overflow-auto" >
-        <p style="overflow: hidden;
-            width: 60%;
-            height: 100px;
-            margin-left:20%;" class="card-text" >
-            {{ name.text_article }}
-        </p>
-      </div>
+    <h5 class="card-title">{{ name.first_name }} {{ name.last_name }}</h5>
+      <img src="{{ name.image.url }}" class="card-img-top" style="width:130px;">
     <a href="{{ name.get_absolute_url }}" class="btn btn-primary">Перейти</a>
   </div>
     </div>

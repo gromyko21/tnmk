@@ -1,11 +1,26 @@
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Редактирование {{ user.username }}{% endblock %}
+{% block link %}
+  <style type="text/css">
+    textarea{width:300px;}
+    input{width:300px;}
+  </style>
+{% endblock %}
 {% block content %}
+<div class="mx-auto" style="width: 220px;">
 <form method="post"  enctype="multipart/form-data">
   {% csrf_token %}
-  {{ user_form.as_p }}
-  {{ profile_form.as_p }}
-  <button type="submit">Сохранить изменения</button>
+  <label>Имя</label></br>
+  {{ profile_form.first_name }}</br>
+  <label>Фамилия</label></br>
+  {{ profile_form.last_name }}</br>
+  <label>Информация о вас</label></br>
+  {{ profile_form.bio }}</br>
+  <label>Дата рождения</label></br>
+  {{ profile_form.birth_date }}</br>
+  {{ profile_form.image }}</br>
+    <button type="submit" style="margin-top:2%; width:300px;" class="btn btn-outline-primary">Сохранить изменения</button>
 </form>
+</div>
 {% endblock %}

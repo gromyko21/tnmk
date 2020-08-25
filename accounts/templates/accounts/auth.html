@@ -5,10 +5,16 @@
 <link rel="stylesheet" type="text/css" href="{% static 'css/registr.css' %}"/>
 {% endblock %}
 {% block content %}
-  <h2>Авторизация</h2>
-  <form method="post">
+<div class="mx-auto" style="width: 220px;">
+  <h2>Вход в аккаунт</h2>
+      <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-  <button type="submit">Отправить</button>
+        Логин</br>
+    {{ form.username }}
+    Пароль</br>
+    {{ form.password }}
+    <button type="submit" style="margin-top:1%; width:215px;" class="btn btn-outline-primary">Войти</button>
   </form>
+</div>
+
 {% endblock %}
