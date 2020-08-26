@@ -12,7 +12,6 @@ class UserLoginForm(AuthenticationForm):
                                widget=forms.PasswordInput(attrs={'class': 'Uname'}))
 
 class UserForm(forms.ModelForm):
-
     class Meta:
         model = User
         fields = ()
@@ -26,3 +25,8 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ('first_name', 'last_name', 'bio', 'birth_date', 'image')
 
+class PostForm(forms.ModelForm):
+
+    class Meta:
+        model = Post
+        exclude = ['author']

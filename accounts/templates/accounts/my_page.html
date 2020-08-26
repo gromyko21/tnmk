@@ -19,4 +19,13 @@
       </div>
   </div>
 </div>
+    {% for post in my_posts %}
+        <div>
+        {{ post.author.first_name }} {{ post.author.last_name }}
+    {% if post.image.name %}
+    <img src="{{ post.image.url }}" class="img-thumbnail"><br>
+    {% endif %}
+    {{ post.text }}
+        </div>
+{% endfor %}
 {% endblock %}

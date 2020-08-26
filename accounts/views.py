@@ -50,7 +50,20 @@ def update_profile(request):
 
 #Загрузка личной страницы
 def my_page(request):
-    return render(request, 'accounts/my_page.html')
+    if not request.user.is_authenticated:
+        return render(request,'accounts/my_page.html')
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.save()
+            return redirect("my_page_url")
+
+    context = {
+            'posts': Post.objects.all(),
+            'my_posts': Post.objects.filter(author=request.user),
+        }
+    return render(request, 'accounts/my_page.html',context)
 
 #Список всех пользователей
 def list_users(request):
@@ -81,8 +94,10 @@ def list_users(request):
 #Личные страницы пользователей
 def user(request, slug):
     user = get_object_or_404(Profile, slug__iexact=slug)
-    return render(request, 'accounts/profile_user.html',
-                  {'user_data': user})
+    my_posts = Post.objects.filter(author=request.user)
+    context={'my_posts': my_posts,
+             'user_data': user}
+    return render(request, 'accounts/profile_user.html',context)
 
 
 

@@ -27,7 +27,7 @@ class Profile(models.Model):
         return reverse('user_url', kwargs={'slug': self.slug})
 
     class Meta:
-        verbose_name = u'Пользователь'
+        verbose_name = u'Пользователя'
         verbose_name_plural = u'Пользователи'
 
     def __str__(self):
@@ -46,3 +46,20 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Post(models.Model):
+    datetime = models.DateTimeField(verbose_name=u"Дата", auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="posts")
+    text = models.CharField(max_length=1000, verbose_name=u"Текст", null=True, blank=True)
+    image = models.FileField(verbose_name=u"Картинка", null=True, blank=True, default='default_photo')
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        ordering = ["-datetime"]
+        verbose_name = u'Пользовательскую новость'
+        verbose_name_plural = u'Пользовательские новости'
+
+    def image_tag(self):
+        return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))

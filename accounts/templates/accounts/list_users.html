@@ -3,18 +3,14 @@
 {% block title %}Список пользователей{% endblock %}
 {% block content %}
 {% for name in page_object.object_list %}
-    <div class="card text-center">
-  <div class="card-body">
+<div class="card text-center">
+  <div class="card-body" style="height:200px;">
     <h4 class="card-title" >{{ name.first_name }} {{ name.last_name }}</h4>
-
         <img src="{{ name.image.url }}" class="card-img-top" style="width:130px;">
-
     <a href="{{ name.get_absolute_url }}" class="btn btn-primary">Перейти</a>
   </div>
-    </div>
-{% endfor %}
-  </div>
 </div>
+{% endfor %}
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
       <a class="page-link" href="{{ prev_url }}">Назад</a>

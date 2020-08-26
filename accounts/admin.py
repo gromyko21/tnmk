@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Profile
+from .models import Profile,Post
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -12,4 +12,11 @@ class ProfileAdmin(admin.ModelAdmin):
 
 admin.site.site_header = 'ТНМК администрирование'
 admin.site.register(Profile, ProfileAdmin)
+
+class PostAdmin(admin.ModelAdmin):
+
+    list_display = ('author','image_tag', 'text','datetime')
+    readonly_fields = ('image_tag',)
+
+admin.site.register(Post, PostAdmin)
 
