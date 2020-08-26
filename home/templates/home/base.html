@@ -12,25 +12,23 @@
   <li class="nav-item">
     <a class="nav-link" href="{% url 'home_url' %}">Главная</a>
   </li>
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Выпадающее меню</a>
-    <div class="dropdown-menu">
-      <a class="dropdown-item" href="#">Action</a>
-      <a class="dropdown-item" href="#">Another action</a>
-      <a class="dropdown-item" href="#">Something else here</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
-    </div>
-  </li>
       <li class="nav-item">
     <a class="nav-link" href="{% url 'list_users_url' %}">Список пользователей</a>
   </li>
   {% if user.is_authenticated %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'my_page_url' %}">Личная страница</a>
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Моя страница</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="{% url 'my_page_url' %}">Моя страница</a>
+      <a class="dropdown-item" href="{% url 'my_page_edit_url' %}">Редактировать</a>
+    </div>
   </li>
-  <li class="nav_item">
+  <!--<li class="nav_item">
       <a class="nav-link" ><p>Привет, {{ user.username }}!</p></a>
+  </li>-->
+      <li class="nav-item">
+      <a class="nav-link" href="{% url 'chat_url' %}">Сообщения</a>
+     </li>
       <li class="nav_item">
         <a class="nav-link"  href="{% url 'out' %}">Выйти</a>
       </li>
@@ -41,10 +39,7 @@
       </li>
     {% endif %}
       <li class="nav-item">
-      <a class="nav-link" href="{% url 'chat_url' %}">Сообщения</a>
-     </li>
-      <li class="nav-item">
-      <a class="nav-link" href="/admin/">Админка</a>
+        <a class="nav-link" href="/admin/">Админка</a>
       </li>
   </ul>
   {% block content %}{% endblock %}

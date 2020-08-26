@@ -4,12 +4,12 @@
 {% block content %}
   <div class="mx-auto" style="width: 45%;">
 <div class="container">
-  <div class="row">
+  <div class="row" style="margin-top:3%;">
     <div class="col">
       <img src='/media/{{ user_data.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
     </div>
     <div class="col">
-      <p>Имя пользователя: </br>{{ user_data.first_name }} {{ user_data.last_name }}</p>
+      <h4>Имя пользователя: </br>{{ user_data.first_name }} {{ user_data.last_name }}</h4>
         <p>Информация о пользователе: </br>{{ user_data.bio }}</p>
       <p>Дата рождения: </br>{{ user_data.birth_date }}</p>
     </div>

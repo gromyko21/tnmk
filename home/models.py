@@ -9,7 +9,7 @@ class Article(models.Model):
     """
     title = models.CharField(max_length=70, verbose_name='Название статьи')
     slug = models.SlugField(verbose_name="URL адрес статьи", unique=True, blank=True, null=True)
-    text_article = models.TextField(max_length=1000, verbose_name='Содержание статьи')
+    text_article = models.TextField(max_length=5000, verbose_name='Содержание статьи')
     image = models.ImageField(upload_to='Articles', verbose_name='Главное изображение статьи')
     image_two = models.ImageField(upload_to='Articles', verbose_name='Дополнительное изображение')
     image_three = models.ImageField(upload_to='Articles', verbose_name='Дополнительное изображение')

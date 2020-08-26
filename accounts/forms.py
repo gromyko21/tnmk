@@ -3,6 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from .models import *
 
+#Ворма вхда
 class UserLoginForm(AuthenticationForm):
 
     username = forms.CharField(label='Логин',
@@ -16,6 +17,7 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ()
 
+#Форма для редактирования личного профиля
 class ProfileForm(forms.ModelForm):
 
     image = forms.ImageField()

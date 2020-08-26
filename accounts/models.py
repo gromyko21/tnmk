@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
-#from django.utils.html import mark_safe
+from django.utils.html import mark_safe
 from slugify import slugify
 
 
@@ -12,15 +12,16 @@ class Profile(models.Model):
     Модель для личного профиля для пользователей
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=30, verbose_name='Имя')
-    last_name = models.CharField(max_length=30, verbose_name='Фамилия')
-    slug = models.SlugField(verbose_name="URL адрес", unique=True, blank=True, null=True)
+    first_name = models.CharField(max_length=30, verbose_name='Имя', default='Новый')
+    last_name = models.CharField(max_length=30, verbose_name='Фамилия', default='Пользователь')
+    slug = models.SlugField(verbose_name="URL адрес", unique=True, blank=True, null=True, default='{}')
     bio = models.TextField(max_length=500, blank=True, verbose_name='Информация о человеке')
     birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
-    image = models.ImageField(null=True, blank=True, upload_to="image_profil", verbose_name='Фото профиля', default='default_photo.jpg')
+    image = models.ImageField(null=True, blank=True, upload_to="image_profil", verbose_name='Фото профиля', default='default_photo')
 
-    #def image_tag(self):
-        #return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))
+    def image_tag(self):
+        return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))
+
 
     def get_absolute_url(self):
         return reverse('user_url', kwargs={'slug': self.slug})
@@ -32,8 +33,8 @@ class Profile(models.Model):
     def __str__(self):
         return self.first_name
 
-    def save(self,  *args, **kwargs):
-        self.slug = slugify(self.first_name + self.last_name)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.user.username)
         return super(Profile, self).save(*args, **kwargs)
 
 #Обновление модели автоматически сохраняется
