@@ -19,4 +19,3 @@ class PostAdmin(admin.ModelAdmin):
     readonly_fields = ('image_tag',)
 
 admin.site.register(Post, PostAdmin)
-
