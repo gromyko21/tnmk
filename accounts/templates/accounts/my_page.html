@@ -19,13 +19,40 @@
       </div>
   </div>
 </div>
-    {% for post in my_posts %}
-        <div>
-        {{ post.author.first_name }} {{ post.author.last_name }}
-    {% if post.image.name %}
-    <img src="{{ post.image.url }}" class="img-thumbnail"><br>
-    {% endif %}
-    {{ post.text }}
-        </div>
+    <div class="container">
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-12">
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+    {{ form.as_p }}
+    <textarea class="form-control" name="text" cols="40" rows="2" maxlength="1000" id="id_text"></textarea>
+    <input type="file" name="image" accept="image/*" id="id_image">
+    <button type="submit" style="margin-top:1%; margin-bottom:1%; width:215px;" class="btn btn-outline-primary">Добавить</button>
+  </form>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+{% for post in my_posts %}
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">
+        <p>{{ post.author.profile.first_name }}
+            {{ post.author.profile.last_name }}
+        </p>
+    </h5>
+      <p>{{ post.datetime }}</p>
+          {% if post.image.name %}
+      <div class="overflow-auto" >
+        <p class="card-text" >
+            {{ post.text }}
+        </p>
+      </div>
+      <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
+          {% endif %}
+  </div>
+    </div>
 {% endfor %}
 {% endblock %}
