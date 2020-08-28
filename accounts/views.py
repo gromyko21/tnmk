@@ -98,7 +98,7 @@ def user(request, slug):
     #Новости на странице выбранного пользователя
     my_posts = Post.objects.filter()
     #Новости на личной странице пользователя
-    user_post = User.objects.get(id=8)
+    user_post = User.objects.get(id=7)
     user_context=Post.objects.filter(author=user_post)
     context={'my_posts': my_posts,
              'user_data': get_user,

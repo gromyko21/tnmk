@@ -23,11 +23,11 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'bio', 'birth_date', 'image')
+        fields = ('first_name', 'last_name', 'position','bio', 'birth_date', 'image')
 
 class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        #exclude = ['author']
+        exclude = ['author']
         fields = ('text', 'image')

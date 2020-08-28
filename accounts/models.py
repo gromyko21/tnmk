@@ -14,6 +14,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30, verbose_name='Имя', default='Новый')
     last_name = models.CharField(max_length=30, verbose_name='Фамилия', default='Пользователь')
+    position = models.CharField(max_length=100, verbose_name='Должность', default='Должность сотрудника')
     slug = models.SlugField(verbose_name="URL адрес", unique=True, blank=True, null=True, default='{}')
     bio = models.TextField(max_length=500, blank=True, verbose_name='Информация о человеке')
     birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
@@ -50,6 +51,7 @@ def save_user_profile(sender, instance, **kwargs):
 class Post(models.Model):
     datetime = models.DateTimeField(verbose_name=u"Дата", auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="posts")
+    #profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="profile", null=True, blank=True)
     text = models.CharField(max_length=1000, verbose_name=u"Текст", null=True, blank=True)
     image = models.FileField(verbose_name=u"Картинка", null=True, blank=True, default='default_photo')
 
