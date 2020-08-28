@@ -20,24 +20,22 @@
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Моя страница</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="{% url 'my_page_url' %}">Моя страница</a>
+      <a class="dropdown-item" href="{% url 'url_index' %}">Сообщения</a>
       <a class="dropdown-item" href="{% url 'my_page_edit_url' %}">Редактировать</a>
+      <a class="dropdown-item" style="color:#0056b3;"  href="{% url 'out' %}">Выйти</a>
     </div>
   </li>
-      <li class="nav-item">
-      <a class="nav-link" href="{% url 'url_index' %}">Сообщения</a>
-     </li>
-      <li class="nav_item">
-        <a class="nav-link"  href="{% url 'out' %}">Выйти</a>
-      </li>
     {% else %}
       <a class="nav-link" ><p>Пользователь не обнаружен</p></a>
       <li class="nav_item">
         <a class="nav-link" href="{% url 'user_login_url' %}">Войти</a>
       </li>
     {% endif %}
+        {% if user.is_superuser %}
       <li class="nav-item">
         <a class="nav-link" href="/admin/">Админка</a>
       </li>
+      {% endif %}
   </ul>
   {% block content %}{% endblock %}
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -92,16 +92,13 @@ def list_users(request):
     return render(request, 'accounts/list_users.html',data)
 
 #Личные страницы пользователей
-def user(request, slug):
+def any_user(request, slug):
     #Получение данных профиля конкретного пользователя
-    get_user = get_object_or_404(Profile, slug__iexact=slug)
-    #Новости на странице выбранного пользователя
-    my_posts = Post.objects.filter()
+    any_user = get_object_or_404(Profile, slug__iexact=slug)
     #Новости на личной странице пользователя
-    user_post = User.objects.get(id=7)
-    user_context=Post.objects.filter(author=user_post)
-    context={'my_posts': my_posts,
-             'user_data': get_user,
+    user_context=Post.objects.filter(author=any_user.user)
+    context={
+             'user_data': any_user,
              'user_context':user_context}
     return render(request, 'accounts/profile_user.html',context)
 
