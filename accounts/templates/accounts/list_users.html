@@ -2,12 +2,22 @@
 {% load static %}
 {% block title %}Список пользователей{% endblock %}
 {% block content %}
+<div class="mx-auto"style="width: 45%;;">
+  <form action="{% url 'list_users_url' %}">
+    <input class="form-control" type="search" placeholder="Поиск пользователей" name="search_name">
+    <div class="card text-center">
+       <div class="card-body">
+        <button type="submit" style="width:220px;" class="btn btn-outline-primary">Поиск</button>
+      </div>
+    </div>
+  </form>
+
 {% for name in page_object.object_list %}
 <div class="card text-center">
   <div class="card-body" style="height:200px;">
     <h4 class="card-title" >{{ name.first_name }} {{ name.last_name }}</h4>
         <img src="{{ name.image.url }}" class="card-img-top" style="width:130px;">
-    <a href="{{ name.get_absolute_url }}" class="btn btn-primary">Перейти</a>
+    <a href="{{ name.get_absolute_url }}"  class='btn btn-primary'>Перейти</a>
   </div>
 </div>
 {% endfor %}
@@ -24,4 +34,5 @@
       <a class="page-link" href="{{ next_url }}">Вперед</a>
   </ul>
 </nav>
+    </div>
 {% endblock %}

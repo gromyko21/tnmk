@@ -11,6 +11,8 @@
     <div class="col">
       <h4>{{ user.profile.first_name }} {{ user.profile.last_name }}</h4>
       <p>Занимаемая должность: </br>{{ user.profile.position }}</p>
+      <p>Электронная почта: </br><a href="mailto:{{ user.profile.email }}">{{ user.profile.email }}</a></p>
+      <p>Номер телефона: </br>{{ user.profile.number_phone }}</p>
         <p>Информация о вас: </br>{{ user.profile.bio }}</p>
       <p>Дата рождения: </br>{{ user.profile.birth_date }}</p>
     </div>
@@ -54,6 +56,9 @@
       <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
           {% endif %}
   </div>
-    </div>
+<!--</div>
+            <div class="col">
+        <button type="button" class="btn btn-outline-primary" onclick="document.location='edit_post/'">Редактировать</button>
+      </div>-->
 {% endfor %}
 {% endblock %}

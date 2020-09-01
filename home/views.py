@@ -1,9 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from .models import Article
+from django.db.models import Q
 
 def home(request):
-    article = Article.objects.order_by('-pk')
+    #Поиск пользователей
+    search_news = request.GET.get('search_news','')
+    if search_news:
+        article = Article.objects.filter(Q(title__icontains=search_news) | Q(text_article__icontains=search_news))
+    else:
+        article = Article.objects.order_by('-pk')
+
     paginator = Paginator(article, 9)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

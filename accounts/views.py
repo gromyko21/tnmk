@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django. contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -50,10 +51,8 @@ def update_profile(request):
 
 #Загрузка личной страницы
 def my_page(request):
-    #if not request.user.is_authenticated:
-        #return render(request,'accounts/my_page.html')
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)#, instance=request.user.author)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.author = request.user
             form.save()
@@ -65,9 +64,31 @@ def my_page(request):
         }
     return render(request, 'accounts/my_page.html',context)
 
+@login_required
+@transaction.atomic
+def update_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('my_page_url')
+        else:
+            pass
+    else:
+        form = UserForm(instance=request.user)
+    return render(request, 'accounts/edit_post.html', {
+        'form': form,
+    })
+
 #Список всех пользователей
 def list_users(request):
-    list_users = Profile.objects.order_by('-pk')
+    #Поиск пользователей
+    search_users = request.GET.get('search_name','')
+    if search_users:
+        list_users = Profile.objects.filter(Q(first_name__icontains=search_users) | Q(last_name__icontains=search_users))
+    else:
+        list_users = Profile.objects.order_by('-pk')
+
     paginator = Paginator(list_users, 15)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

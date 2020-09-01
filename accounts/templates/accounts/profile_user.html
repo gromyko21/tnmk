@@ -11,6 +11,8 @@
     <div class="col">
       <h4>Имя пользователя: </br>{{ user_data.first_name }} {{ user_data.last_name }}</h4>
       <p>Занимаемая должность: </br>{{ user_data.position }}</p>
+        <p>Электронная почта: </br><a href="mailto:{{ user_data.email }}">{{ user_data.email }}</a></p>
+        <p>Номер телефона: </br>{{ user_data.number_phone }}</p>
         <p>Информация о пользователе: </br>{{ user_data.bio }}</p>
       <p>Дата рождения: </br>{{ user_data.birth_date }}</p>
     </div>
@@ -25,16 +27,16 @@
             {{ post.author.profile.last_name }}
         </p>
     </h5>
-      <p>{{ post.datetime }}</p>
-          {% if post.image.name %}
-      <div class="overflow-auto" >
-        <p class="card-text" >
-            {{ post.text }}
-        </p>
-      </div>
-      <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
-          {% endif %}
-  </div>
+    <p>{{ post.datetime }}</p>
+  {% if post.image.name %}
+    <div class="overflow-auto" >
+       <p class="card-text" >
+           {{ post.text }}
+       </p>
     </div>
+      <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
+  {% endif %}
+  </div>
+</div>
 {% endfor %}
 {% endblock %}
