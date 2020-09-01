@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.html import mark_safe
+from django.contrib.auth.models import User
 from slugify import slugify
 
 class Article(models.Model):
@@ -27,4 +28,17 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+class Comment(models.Model):
+    post = models.ForeignKey(Article, related_name='post', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="author")
+    body = models.TextField(max_length=1000)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('created',)
+        verbose_name = u'Коммертарий'
+        verbose_name_plural = u'Комментарии'
+
+    def __str__(self):
+        return self.body

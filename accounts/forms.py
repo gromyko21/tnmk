@@ -30,5 +30,6 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        exclude = ['author']
+        exclude = ['author','post']
         fields = '__all__'
+

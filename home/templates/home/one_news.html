@@ -2,21 +2,38 @@
 {% block title %} {{ news.title }} {% endblock %}
 {% load static %}
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col">
-    </div>
-    <div class="col-8">
-        <h1 style="text-align:center;margin-bottom:3%;">{{ articles.title }}</h1>
-        <div style="margin-bottom:3%;">
+<div class="mx-auto" style="width: 45%;;">
+    <h1 style="text-align:center;margin-bottom:3%;">{{ articles.title }}</h1>
+    <div class="card text-center">
+        <div class="card-body" >
             <img style="width:200px" src="{{ articles.image.url }}">
             <img style="width:200px" src="{{ articles.image_two.url }}">
             <img style="width:200px" src="{{ articles.image_three.url }}">
         </div>
+    <div class="card text-center" >
         <p>{{ articles.text_article }}</p>
     </div>
-    <div class="col">
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <!--<textarea class="form-control" name="text" cols="40" rows="2" maxlength="1000" id="id_body"></textarea>-->
+        <button type="submit" style="margin-top:1%; margin-bottom:1%; width:215px;" class="btn btn-outline-primary">Добавить</button>
+    </form>
+    {% for comment in comments %}
+        <div class="media">
+            <img src="/media/{{ comment.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+            <div class="media-body">
+                <h7 class="mt-0">
+                    <a href="{{ comment.author.profile.get_absolute_url }}" style="float:left;">
+                        {{ comment.author.profile.first_name }} {{ comment.author.profile.last_name }}&#160; &#160;
+                    </a>
+                    <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ comment.created }}</p>
+                </h7>
+                <p style="text-align:left;">{{ comment.body }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
   </div>
 </div>
 {% endblock %}

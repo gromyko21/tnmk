@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
-from .models import Article
+from .models import Article, Comment
 
 
 class ArticlesAdmin(admin.ModelAdmin):
@@ -12,4 +12,5 @@ class ArticlesAdmin(admin.ModelAdmin):
 
 admin.site.site_header = 'ТНМК администрирование'
 admin.site.register(Article, ArticlesAdmin)
+admin.site.register(Comment)
 #admin.site.unregister(Group)

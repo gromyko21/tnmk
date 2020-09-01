@@ -60,8 +60,9 @@ class Post(models.Model):
 
     class Meta:
         ordering = ["-datetime"]
-        verbose_name = u'Пользовательскую новость'
+        verbose_name = u'Пользовательская новость'
         verbose_name_plural = u'Пользовательские новости'
 
     def image_tag(self):
         return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))
+
