@@ -42,6 +42,8 @@
 <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">
+      <a href="edit_post/{{post.id}}">Изменить</a> |
+      <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="delete_post/{{post.id}}">Удалить</a>
         <p>{{ post.author.profile.first_name }}
             {{ post.author.profile.last_name }}
         </p>
@@ -56,9 +58,5 @@
       <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
           {% endif %}
   </div>
-<!--</div>
-            <div class="col">
-        <button type="button" class="btn btn-outline-primary" onclick="document.location='edit_post/'">Редактировать</button>
-      </div>-->
 {% endfor %}
 {% endblock %}

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound
 from .forms import *
 from django.contrib.auth import login, logout
 from .models import *
@@ -58,27 +59,39 @@ def my_page(request):
             form.save()
             return redirect("my_page_url")
 
+
     context = {
             'posts': Post.objects.all(),
             'my_posts': Post.objects.filter(author=request.user),
         }
     return render(request, 'accounts/my_page.html',context)
 
+#Обновить данные поста
 @login_required
-@transaction.atomic
-def update_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save()
-            return redirect('my_page_url')
+def update_post(request, id):
+    try:
+        post = Post.objects.get(pk=id)
+        if request.method == "POST":
+            post.text = request.POST.get("text")
+            post.image = request.POST.get('image')
+            post.save()
+            return redirect("my_page_url")
         else:
-            pass
-    else:
-        form = UserForm(instance=request.user)
-    return render(request, 'accounts/edit_post.html', {
-        'form': form,
-    })
+            form = PostForm()
+            return render(request, "accounts/edit_post.html",
+                          {
+                              "post": post,
+                           })
+    except Post.DoesNotExist:
+        return HttpResponseNotFound("<h2>Post not found</h2>")
+
+def delete_post(request, id):
+    try:
+        person = Post.objects.get(id=id)
+        person.delete()
+        return redirect("my_page_url")
+    except Post.DoesNotExist:
+        return HttpResponseNotFound("<h2>Post not found</h2>")
 
 #Список всех пользователей
 def list_users(request):
