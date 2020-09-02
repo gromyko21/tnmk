@@ -11,7 +11,7 @@ class Profile(models.Model):
     """
     Модель для личного профиля для пользователей
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE,editable=False)
     first_name = models.CharField(max_length=30, verbose_name='Имя', default='Новый')
     last_name = models.CharField(max_length=30, verbose_name='Фамилия', default='Пользователь')
     position = models.CharField(max_length=100, verbose_name='Должность', default='Должность сотрудника')
@@ -29,8 +29,8 @@ class Profile(models.Model):
         return reverse('user_url', kwargs={'slug': self.slug})
 
     class Meta:
-        verbose_name = u'Пользователя'
-        verbose_name_plural = u'Пользователи'
+        verbose_name = u'Данные пользователя'
+        verbose_name_plural = u'Данные пользователей'
 
     def __str__(self):
         return self.first_name

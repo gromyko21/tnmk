@@ -15,9 +15,8 @@
 {% for name in page_object.object_list %}
 <div class="card text-center">
   <div class="card-body" style="height:200px;">
-    <h4 class="card-title" >{{ name.first_name }} {{ name.last_name }}</h4>
-        <img src="{{ name.image.url }}" class="card-img-top" style="width:130px;">
-    <a href="{{ name.get_absolute_url }}"  class='btn btn-primary'>Перейти</a>
+      <h4 class="card-title" > <a href="{{ name.get_absolute_url }}">{{ name.first_name }} {{ name.last_name }}</a></h4>
+      <img src="{{ name.image.url }}" class="card-img-top" style="width:130px;">
   </div>
 </div>
 {% endfor %}

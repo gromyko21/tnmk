@@ -29,10 +29,12 @@ class Article(models.Model):
         return self.title
 
 class Comment(models.Model):
-    post = models.ForeignKey(Article, related_name='post', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="author")
-    body = models.TextField(max_length=1000)
-    created = models.DateTimeField(auto_now_add=True)
+    post = models.ForeignKey(Article, related_name='post',
+                             on_delete=models.CASCADE,editable=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               verbose_name=u"Автор", related_name="author",editable=False)
+    body = models.TextField(max_length=1000, verbose_name=u"Текст комментария")
+    created = models.DateTimeField(auto_now_add=True, verbose_name=u"Дата создания")
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:

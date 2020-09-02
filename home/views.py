@@ -38,23 +38,20 @@ def home(request):
 def articles(request, slug):
     articles = get_object_or_404(Article, slug__iexact=slug)
     #Комментарии
-
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            form.instance.author = request.user
-            #form.instance.post = request.post_id
-            form.save()
-            return redirect("/")
-        else:
-            pass
-            #messages.error(request, ('Пожалуйста, исправьте ошибки.'))
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment_form.instance.author = request.user
+            comment_form.instance.post = articles
+            comment_form.save()
+            return redirect(articles)
     else:
-        form = CommentForm(instance=request.user)
-    comment = Comment.objects.order_by('-pk')
+        comment_form = CommentForm()
+
+    comments = Comment.objects.order_by('-pk').filter(post=articles)
     context = {
-        'form':form,
-        'comments': comment,
-        'articles': articles,
+        'articles':      articles,
+        'comments':     comments,
+        'comment_form': comment_form,
     }
     return render(request, 'home/one_news.html', context)

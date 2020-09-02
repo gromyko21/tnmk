@@ -12,5 +12,12 @@ class ArticlesAdmin(admin.ModelAdmin):
 
 admin.site.site_header = 'ТНМК администрирование'
 admin.site.register(Article, ArticlesAdmin)
-admin.site.register(Comment)
+
+class CommentAdmin(admin.ModelAdmin):
+
+    list_display = ('author', 'body','created')
+    def has_add_permission(self, request):
+        return False
+
+admin.site.register(Comment, CommentAdmin)
 #admin.site.unregister(Group)

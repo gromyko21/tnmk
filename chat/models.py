@@ -13,3 +13,7 @@ class Message(models.Model):
 
     def last_10_messages():
         return Message.objects.order_by('-timestamp').all()[:10]
+
+    class Meta:
+        verbose_name = u'Чат'
+        verbose_name_plural = u'Чаты'
