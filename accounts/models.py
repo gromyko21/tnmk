@@ -53,7 +53,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=u"Автор", related_name="posts")
     datetime = models.DateTimeField(verbose_name=u"Дата", auto_now_add=True)
     text = models.CharField(max_length=1000, verbose_name=u"Текст", null=True, blank=True)
-    image = models.FileField(verbose_name=u"Картинка", null=True, blank=True, default='default_photo')
+    image = models.FileField(verbose_name=u"Картинка", upload_to="image_post", null=True, blank=True, default='default_photo')
 
     def __str__(self):
         return self.text

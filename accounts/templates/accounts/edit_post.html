@@ -3,11 +3,11 @@
 {% block title %}Редактирование {{ user.username }}{% endblock %}
 {% block content %}
 <div class="mx-auto" style="width: 45%;">
-    <form method="POST">
+    <form method="POST"  enctype="multipart/form-data">
         {% csrf_token %}
         <label>Изменения</label><br>
         <textarea class="form-control" name="text" cols="40" rows="3" maxlength="1000" required id="id_text" >{{post.text}}</textarea>
-        <!--<input type="file" name="image" accept="image/*" required id="id_image">-->
+        {{ post_form.image }}
         <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Изменить</button>
     </form>
 </div>

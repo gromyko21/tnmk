@@ -72,15 +72,18 @@ def update_post(request, id):
     try:
         post = Post.objects.get(pk=id)
         if request.method == "POST":
+            post_form = PostForm(request.POST, request.FILES, instance=post)
             post.text = request.POST.get("text")
-            #post.image = request.POST.get('image')
+            post.image = request.POST.get('image')
+            post_form.save()
             post.save()
             return redirect("my_page_url")
         else:
-            form = PostForm()
+            post_form = PostForm(instance=post)
             return render(request, "accounts/edit_post.html",
                           {
                               "post": post,
+                              'post_form': post_form,
                            })
     except Post.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
