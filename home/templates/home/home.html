@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Домашняя страница{% endblock %}
 {% block content %}
-<div class="mx-auto" style="width: 45%;">
+<div class="mx-auto" style="width: 35%;">
   <form action="{% url 'home_url' %}">
     <input class="form-control" type="search" placeholder="Поиск новостей" name="search_news">
      <div class="card text-center">
@@ -16,9 +16,9 @@
     <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">{{ name.title }}</h5>
-      <img src="{{ name.image.url }}" class="card-img-top" style="width:200px;">
-      <img src="{{ name.image_two.url }}" class="card-img-top" style="width:200px;">
-      <img src="{{ name.image_three.url }}" class="card-img-top" style="width:200px;">
+      <img src="{{ name.image.url }}" class="card-img-top" style="width:150px;">
+      <img src="{{ name.image_two.url }}" class="card-img-top" style="width:150px;">
+      <img src="{{ name.image_three.url }}" class="card-img-top" style="width:150px;">
       <div class="overflow-auto" >
         <p style="overflow: hidden;
             width: 60%;

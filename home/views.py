@@ -62,12 +62,13 @@ def articles(request, slug):
 @login_required
 def edit_comment(request, id):
     try:
+        #article = get_object_or_404(Article, slug=slug)
         comment_edit = Comment.objects.get(id=id)
         if request.method == "POST":
             comment_edit.body = request.POST.get("body")
             #post.image = request.POST.get('image')
             comment_edit.save()
-            return redirect("my_page_url")
+            return redirect('home_url')
         else:
             form = CommentForm()
             return render(request, "home/edit_comment.html",
