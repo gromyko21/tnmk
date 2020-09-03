@@ -1,5 +1,5 @@
 {% extends 'home/base.html' %}
-{% block title %} {{ news.title }} {% endblock %}
+{% block title %} {{ articles.title }} {% endblock %}
 {% load static %}
 {% block content %}
 <div class="mx-auto" style="width: 45%;;">
@@ -26,7 +26,12 @@
                     <a href="{{ comment.author.profile.get_absolute_url }}" style="float:left;">
                         {{ comment.author.profile.first_name }} {{ comment.author.profile.last_name }}
                     </a>
-                   <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ comment.created }}</p>
+                    <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ comment.created }}
+                       {% if user == comment.author %}
+                        <a href="/edit_comment/{{comment.id}}">Изменить</a> |
+                        <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="/delete_comment/{{comment.id}}">Удалить</a>
+                        {% endif %}
+                    </p>
                 </h7>
                 <p style="text-align:left;">{{ comment.body }}</p>
             </div>

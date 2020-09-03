@@ -3,6 +3,9 @@ from django.core.paginator import Paginator
 from .models import Article
 from django.db.models import Q
 from .forms import *
+from django.http import HttpResponse, HttpResponseNotFound
+from django.contrib.auth.decorators import login_required
+
 
 def home(request):
     #Поиск пользователей
@@ -55,3 +58,31 @@ def articles(request, slug):
         'comment_form': comment_form,
     }
     return render(request, 'home/one_news.html', context)
+
+@login_required
+def edit_comment(request, id):
+    try:
+        comment_edit = Comment.objects.get(pk=id)
+        if request.method == "POST":
+            comment_edit.body = request.POST.get("body")
+            #post.image = request.POST.get('image')
+            comment_edit.save()
+            return redirect("my_page_url")
+        else:
+            form = CommentForm()
+            return render(request, "home/edit_comment.html",
+                          {
+                              "comment": comment_edit,
+                           })
+    except Comment.DoesNotExist:
+        return HttpResponseNotFound("<h2>Post not found</h2>")
+
+#даление комментариев
+def delete_comment(request, id):
+    try:
+        comment = Comment.objects.get(id=id)
+        comment.delete()
+        return redirect("home_url")
+    except Comment.DoesNotExist:
+        return HttpResponseNotFound("<h2>Post not found</h2>")
+

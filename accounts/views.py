@@ -73,7 +73,7 @@ def update_post(request, id):
         post = Post.objects.get(pk=id)
         if request.method == "POST":
             post.text = request.POST.get("text")
-            post.image = request.POST.get('image')
+            #post.image = request.POST.get('image')
             post.save()
             return redirect("my_page_url")
         else:
@@ -135,6 +135,3 @@ def any_user(request, slug):
              'user_data': any_user,
              'user_context':user_context}
     return render(request, 'accounts/profile_user.html',context)
-
-
-

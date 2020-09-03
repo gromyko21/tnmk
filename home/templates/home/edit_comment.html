@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Редактирование комментария{% endblock %}
+{% block content %}
+<div class="mx-auto" style="width: 45%;">
+
+        <h2>Edit Comment</h2>
+        <form method="POST">
+            {% csrf_token %}
+
+            <textarea  name="text" class="form-control" required id="id_text">{{ comment.text }}</textarea>
+            <button type="submit">Submit</button>
+        </form>
+{% endblock %}
