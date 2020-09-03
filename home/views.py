@@ -62,7 +62,7 @@ def articles(request, slug):
 @login_required
 def edit_comment(request, id):
     try:
-        comment_edit = Comment.objects.get(pk=id)
+        comment_edit = Comment.objects.get(id=id)
         if request.method == "POST":
             comment_edit.body = request.POST.get("body")
             #post.image = request.POST.get('image')

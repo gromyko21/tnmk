@@ -8,7 +8,7 @@
         <form method="POST">
             {% csrf_token %}
 
-            <textarea  name="text" class="form-control" required id="id_text">{{ comment.text }}</textarea>
+            <textarea  name="body" class="form-control" required id="id_body">{{ comment.body }}</textarea>
             <button type="submit">Submit</button>
         </form>
 {% endblock %}
