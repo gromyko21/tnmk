@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}{{ user.profile.first_name }} {{ user.profile.last_name }}{% endblock %}
 {% block content %}
-<div class="mx-auto" style="width: 45%;">
+<div class="mx-auto" style="width: 35%;">
 <div class="container">
   <div class="row" style="margin-top:3%;">
     <div class="col">
@@ -39,24 +39,26 @@
     </div>
   </div>
 {% for post in my_posts %}
-<div class="card text-center">
+<div class="card text-center" style="text-align:left !important">
   <div class="card-body">
-    <h5 class="card-title">
-      <a href="edit_post/{{post.id}}">Изменить</a> |
-      <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="delete_post/{{post.id}}">Удалить</a>
-        <p>{{ post.author.profile.first_name }}
-            {{ post.author.profile.last_name }}
+    <div class="col-md-12">
+      <h5 class="card-title">
+        <p style="float:left;">
+          {{ post.author.profile.first_name }} {{ post.author.profile.last_name }}
         </p>
-    </h5>
-      <p>{{ post.datetime }}</p>
-          {% if post.image.name %}
-      <div class="overflow-auto" >
-        <p class="card-text" >
-            {{ post.text }}
+        <p style="font-size:10pt; color: #5f5f5f;float:left;">&#160; &#160; {{ post.datetime }}
+          <a href="edit_post/{{post.id}}">&#160; &#160;Изменить</a> |
+          <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="delete_post/{{post.id}}">Удалить</a>
         </p>
-      </div>
-      <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
-          {% endif %}
+      </h5>
+    </div>
+  <div class="col-md-12" style="float: left;">
+    <p>{{ post.text }}</p>
   </div>
+  {% if post.image.name %}
+      <img src="{{ post.image.url }}" class="card-img-top" style="max-width:100%;">
+  {% endif %}
+  </div>
+</div>
 {% endfor %}
 {% endblock %}

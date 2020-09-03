@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}{{ user_data.first_name }} {{ user_data.last_name }}{% endblock %}
 {% block content %}
-<div class="mx-auto" style="width: 45%;">
+<div class="mx-auto" style="width: 35%;">
 <div class="container">
   <div class="row">
     <div class="col">
@@ -18,25 +18,24 @@
     </div>
   </div>
 </div>
-</div>
 {% for post in user_context %}
-<div class="card text-center">
+<div class="card text-center" style="text-align:left !important">
   <div class="card-body">
-    <h5 class="card-title">
-        <p>{{ post.author.profile.first_name }}
-            {{ post.author.profile.last_name }}
-        </p>
-    </h5>
-    <p>{{ post.datetime }}</p>
+      <div class="col-md-12">
+    <h10 class="card-title" >
+        <p style="float:left;">{{ post.author.profile.first_name }}
+            {{ post.author.profile.last_name }}</p>
+            <p style="font-size:10pt; color: #5f5f5f;">&#160; &#160;{{ post.datetime }}</p>
+    </h10>
+          </div>
+      <div class="col-md-12" style="float: left;">
+        <p>{{ post.text }}</p>
+      </div>
   {% if post.image.name %}
-    <div class="overflow-auto" >
-       <p class="card-text" >
-           {{ post.text }}
-       </p>
-    </div>
-      <img src="{{ post.image.url }}" class="card-img-top" style="width:200px;">
+      <img src="{{ post.image.url }}" class="card-img-top" style="max-width:100%;">
   {% endif %}
   </div>
 </div>
 {% endfor %}
+</div>
 {% endblock %}
