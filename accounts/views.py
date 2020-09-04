@@ -60,6 +60,7 @@ def my_page(request):
             return redirect("my_page_url")
 
 
+
     context = {
             'posts': Post.objects.all(),
             'my_posts': Post.objects.filter(author=request.user),

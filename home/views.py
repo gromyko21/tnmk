@@ -60,15 +60,15 @@ def articles(request, slug):
     return render(request, 'home/one_news.html', context)
 
 @login_required
-def edit_comment(request, id):
+def edit_comment(request, id, slug):
     try:
-        #article = get_object_or_404(Article, slug=slug)
+        articles = get_object_or_404(Article, slug__iexact=slug)
         comment_edit = Comment.objects.get(id=id)
         if request.method == "POST":
             comment_edit.body = request.POST.get("body")
             #post.image = request.POST.get('image')
             comment_edit.save()
-            return redirect('home_url')
+            return redirect(articles)
         else:
             form = CommentForm()
             return render(request, "home/edit_comment.html",

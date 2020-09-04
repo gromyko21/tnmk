@@ -27,7 +27,7 @@ class ProfileForm(forms.ModelForm):
         fields = '__all__'
 
 class PostForm(forms.ModelForm):
-
+    image = forms.ImageField()
     class Meta:
         model = Post
         exclude = ['author','post']
