@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound
 from .forms import *
-from django.contrib.auth import login, logout
 from .models import *
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
-from django. contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+
 
 #Авторизация пользователей
 def user_login(request):
@@ -22,33 +22,30 @@ def user_login(request):
         form = UserLoginForm()
     return render(request, 'accounts/auth.html', {'form': form})
 
+
 #Выход из ЛК пользователя
 def out(request):
     logout(request)
     return redirect('home_url')
+
 
 #Создание и обновление данных профиля
 @login_required
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        user_form = UserForm(request.POST, request.FILES, instance=request.user)
         profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if profile_form.is_valid():
             profile_form.save()
-            #messages.success(request, ('Ваш профиль был успешно обновлен!'))
             return redirect('my_page_url')
         else:
             pass
-            #messages.error(request, ('Пожалуйста, исправьте ошибки.'))
     else:
-        user_form = UserForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'accounts/edit.html', {
-        'user_form': user_form,
         'profile_form': profile_form
     })
+
 
 #Загрузка личной страницы
 def my_page(request):
@@ -58,14 +55,18 @@ def my_page(request):
             form.instance.author = request.user
             form.save()
             return redirect("my_page_url")
-
-
+        else:
+            pass
+    else:
+        form = PostForm()
 
     context = {
             'posts': Post.objects.all(),
             'my_posts': Post.objects.filter(author=request.user),
+            'form': form,
         }
     return render(request, 'accounts/my_page.html',context)
+
 
 #Обновить данные поста
 @login_required
@@ -89,6 +90,7 @@ def update_post(request, id):
     except Post.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
 
+
 def delete_post(request, id):
     try:
         person = Post.objects.get(id=id)
@@ -97,10 +99,11 @@ def delete_post(request, id):
     except Post.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
 
+
 #Список всех пользователей
 def list_users(request):
     #Поиск пользователей
-    search_users = request.GET.get('search_name','')
+    search_users = request.GET.get('search_name', '')
     if search_users:
         list_users = Profile.objects.filter(Q(first_name__icontains=search_users) | Q(last_name__icontains=search_users))
     else:
@@ -129,13 +132,14 @@ def list_users(request):
     }
     return render(request, 'accounts/list_users.html',data)
 
+
 #Личные страницы пользователей
 def any_user(request, slug):
     #Получение данных профиля конкретного пользователя
     any_user = get_object_or_404(Profile, slug__iexact=slug)
     #Новости на личной странице пользователя
-    user_context=Post.objects.filter(author=any_user.user)
-    context={
+    user_context = Post.objects.filter(author=any_user.user)
+    context = {
              'user_data': any_user,
-             'user_context':user_context}
-    return render(request, 'accounts/profile_user.html',context)
+             'user_context': user_context}
+    return render(request, 'accounts/profile_user.html', context)

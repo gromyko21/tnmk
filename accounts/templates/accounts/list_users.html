@@ -11,7 +11,6 @@
       </div>
     </div>
   </form>
-
 {% for name in page_object.object_list %}
 <div class="card text-center">
   <div class="card-body" style="height:200px;">
@@ -23,15 +22,15 @@
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
       <a class="page-link" href="{{ prev_url }}">Назад</a>
-    {% for n in page_object.paginator.page_range %}
-      {%  if page_object.number == n %}
-    <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+      {% for n in page_object.paginator.page_range %}
+        {%  if page_object.number == n %}
+          <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
         {% elif n > page_object.number|add:-3 and n < page_object.number|add:3  %}
-            <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
         {% endif %}
-    {% endfor %}
+      {% endfor %}
       <a class="page-link" href="{{ next_url }}">Вперед</a>
   </ul>
 </nav>
-    </div>
+</div>
 {% endblock %}

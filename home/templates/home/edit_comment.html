@@ -3,12 +3,16 @@
 {% block title %}Редактирование комментария{% endblock %}
 {% block content %}
 <div class="mx-auto" style="width: 45%;">
-
-        <h2>Редактировать комментарий</h2>
-        <form method="POST">
-            {% csrf_token %}
-
-            <textarea  name="body" class="form-control" required id="id_body">{{ comment.body }}</textarea>
-            <button type="submit">Сохранить</button>
-        </form>
+  {% if user == comment.author %}
+    <h2>Редактировать комментарий</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <textarea  name="body" class="form-control" required id="id_body">{{ comment.body }}</textarea>
+        <button type="submit">Сохранить</button>
+  {% else %}
+    <div class="card text-center">
+      Для вас эта страница недоступна (:
+    </div>
+  {% endif %}
+      </form>
 {% endblock %}

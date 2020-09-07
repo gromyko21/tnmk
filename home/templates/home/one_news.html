@@ -3,41 +3,42 @@
 {% load static %}
 {% block content %}
 <div class="mx-auto" style="width: 45%;;">
-    <h1 style="text-align:center;margin-bottom:3%;">{{ articles.title }}</h1>
-    <div class="card text-center">
-        <div class="card-body" >
-            <img style="width:200px" src="{{ articles.image.url }}">
-            <img style="width:200px" src="{{ articles.image_two.url }}">
-            <img style="width:200px" src="{{ articles.image_three.url }}">
-        </div>
-    <div class="card text-center" >
-        <p>{{ articles.text_article }}</p>
+  <h1 style="text-align:center;margin-bottom:3%;">{{ articles.title }}</h1>
+  <div class="card text-center">
+    <div class="card-body" >
+      <img style="width:200px" src="{{ articles.image.url }}">
+      <img style="width:200px" src="{{ articles.image_two.url }}">
+      <img style="width:200px" src="{{ articles.image_three.url }}">
     </div>
-    <form method="post">
-        {% csrf_token %}
-        <textarea class="form-control" name="body" cols="40" rows="3" maxlength="1000" required id="id_body"></textarea>
-        <button type="submit" style="margin-top:1%; margin-bottom:1%; width:215px;" class="btn btn-outline-primary">Добавить</button>
-    </form>
-    {% for comment in comments %}
-        <div class="media">
-            <img src="/media/{{ comment.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
-            <div class="media-body">
-                <h7 class="mt-0">
-                    <a href="{{ comment.author.profile.get_absolute_url }}" style="float:left;">
-                        {{ comment.author.profile.first_name }} {{ comment.author.profile.last_name }}
-                    </a>
-                    <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ comment.created }}
-                       {% if user == comment.author %}
-                        <a href="{{ articles.get_absolute_url }}edit_comment/{{comment.id}}">Изменить</a> |
-                        <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="/delete_comment/{{comment.id}}">Удалить</a>
-                        {% endif %}
-                    </p>
-                </h7>
-                <p style="text-align:left;">{{ comment.body }}</p>
-            </div>
-        </div>
-    {% endfor %}
-
+  <div class="card text-center" >
+    <p>{{ articles.text_article }}</p>
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    <textarea class="form-control" name="body" cols="40" rows="3" maxlength="1000" required id="id_body"></textarea>
+    <button type="submit" style="margin-top:1%; margin-bottom:1%; width:215px;" class="btn btn-outline-primary">Добавить</button>
+  </form>
+  {% for comment in comments %}
+    <div class="media">
+      <img src="/media/{{ comment.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+      <div class="media-body">
+        <h7 class="mt-0">
+          <a href="{{ comment.author.profile.get_absolute_url }}" style="float:left;">
+          {{ comment.author.profile.first_name }} {{ comment.author.profile.last_name }}
+          </a>
+          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ comment.created }}
+          {% if user == comment.author %}
+            <a href="{{ articles.get_absolute_url }}edit_comment/{{comment.id}}">Изменить</a> |
+            <a onclick="if(confirm('Удалить?')){ return true } else { return false }" href="{{ articles.get_absolute_url }}delete_comment/{{comment.id}}">
+              Удалить
+            </a>
+          {% endif %}
+          </p>
+        </h7>
+        <p style="text-align:left;">{{ comment.body }}</p>
+      </div>
+    </div>
+  {% endfor %}
   </div>
 </div>
 {% endblock %}

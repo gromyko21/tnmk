@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
 
 
+#Загрузка главной страницы
 def home(request):
     #Поиск пользователей
     search_news = request.GET.get('search_news','')
@@ -15,7 +16,7 @@ def home(request):
     else:
         article = Article.objects.order_by('-pk')
 
-    #Постраничная пагинация новостей
+    #Пагинация новостей
     paginator = Paginator(article, 9)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -38,9 +39,11 @@ def home(request):
     }
     return render(request, 'home/home.html', data)
 
+
+#Страница для каждой записи
 def articles(request, slug):
     articles = get_object_or_404(Article, slug__iexact=slug)
-    #Комментарии
+    #Комментарии к записям
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
@@ -59,6 +62,7 @@ def articles(request, slug):
     }
     return render(request, 'home/one_news.html', context)
 
+
 @login_required
 def edit_comment(request, id, slug):
     try:
@@ -72,18 +76,18 @@ def edit_comment(request, id, slug):
         else:
             form = CommentForm()
             return render(request, "home/edit_comment.html",
-                          {
-                              "comment": comment_edit,
-                           })
+                          {"comment": comment_edit,})
     except Comment.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
 
-#даление комментариев
-def delete_comment(request, id):
+
+#Удаление комментариев
+def delete_comment(request, id, slug):
     try:
+        articles = get_object_or_404(Article, slug__iexact=slug)
         comment = Comment.objects.get(id=id)
         comment.delete()
-        return redirect("home_url")
+        return redirect(articles)
     except Comment.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
 

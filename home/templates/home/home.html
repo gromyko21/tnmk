@@ -13,7 +13,7 @@
   </form>
 <div class="container" style="padding-left:0; padding-right:0;">
 {% for name in page_object.object_list %}
-    <div class="card text-center">
+  <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">{{ name.title }}</h5>
       <img src="{{ name.image.url }}" class="card-img-top" style="width:150px;">
@@ -29,22 +29,21 @@
       </div>
     <a href="{{ name.get_absolute_url }}" class="btn btn-primary">Перейти</a>
   </div>
-    </div>
-{% endfor %}
   </div>
+{% endfor %}
+</div>
 </div>
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-center">
-      <a class="page-link" href="{{ prev_url }}">Назад</a>
+    <a class="page-link" href="{{ prev_url }}">Назад</a>
     {% for n in page_object.paginator.page_range %}
       {%  if page_object.number == n %}
-    <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
-        {% elif n > page_object.number|add:-3 and n < page_object.number|add:3  %}
-            <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
-        {% endif %}
+        <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+      {% elif n > page_object.number|add:-3 and n < page_object.number|add:3  %}
+        <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+      {% endif %}
     {% endfor %}
       <a class="page-link" href="{{ next_url }}">Вперед</a>
   </ul>
 </nav>
-</div>
 {% endblock %}
