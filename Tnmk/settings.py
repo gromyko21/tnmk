@@ -1,5 +1,3 @@
-
-
 import os
 from pathlib import Path
 
@@ -22,14 +20,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
-    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chat',
     'home',
     'accounts',
 ]
@@ -63,16 +60,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Tnmk.wsgi.application'
-ASGI_APPLICATION = "Tnmk.routing.application"
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
-}
 
 
 # Database
@@ -84,7 +72,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

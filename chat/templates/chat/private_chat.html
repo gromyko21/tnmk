@@ -1,0 +1,14 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Личные cообщения{% endblock %}
+{% block content %}
+{% for chat in body_chat %}
+    <p>{{ chat.author.profile.first_name }} {{ chat.author.profile.last_name }}</br> {{ chat.pub_date }}</p>
+    {{ chat.message }}</br>
+{% endfor %}
+<form method="post">
+    {% csrf_token %}
+    {{ message_form }}
+
+    <button type="submit" style="margin-top:1%; margin-bottom:1%; width:215px;" class="btn btn-outline-primary">Добавить</button>
+{% endblock %}

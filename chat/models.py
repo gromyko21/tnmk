@@ -1,21 +1,18 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Message(models.Model):
-    '''
-    Обмен личными сообщениями
-    '''
-    author = models.ForeignKey(User, related_name='author_messages', on_delete=models.CASCADE)
-    content = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.author.username
-
-    def last_10_messages():
-        return Message.objects.order_by('-timestamp').all()[:10]
+    author = models.ForeignKey(User, verbose_name="Отправитель", on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
+    message = models.TextField("Сообщение")
+    pub_date = models.DateTimeField('Дата сообщения', default=timezone.now)
+    is_readed = models.BooleanField('Прочитано', default=False)
 
     class Meta:
-        verbose_name = u'Чат'
-        verbose_name_plural = u'Чаты'
+        verbose_name = u'Сообщение'
+        verbose_name_plural = u'Сообщения'
+
+    def __str__(self):
+        return self.message

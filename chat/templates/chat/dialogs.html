@@ -1,0 +1,11 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Сообщения{% endblock %}
+{% block content %}
+    {% for chat in chat %}
+        <a href="{{ chat.slug  }}">{{ chat.user.profile.first_name }} {{ chat.user.profile.last_name }}</a></br>
+        <p>{{ chat.pub_date }}</p>
+        <p>{{ chat.message }}</p>
+    {% endfor %}
+
+{% endblock %}

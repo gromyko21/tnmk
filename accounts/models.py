@@ -39,7 +39,6 @@ class Profile(models.Model):
         self.slug = slugify(self.user.username)
         return super(Profile, self).save(*args, **kwargs)
 
-
 #Обновление модели автоматически сохраняется
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

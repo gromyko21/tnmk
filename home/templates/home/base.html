@@ -21,9 +21,9 @@
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Моя страница</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="{% url 'my_page_url' %}">Моя страница</a>
-      <a class="dropdown-item" href="{% url 'url_index' %}">Сообщения</a>
+      <a class="dropdown-item" href="{% url 'chat_url' %}">Сообщения</a>
       <a class="dropdown-item" href="{% url 'my_page_edit_url' %}">Редактировать</a>
-      <a class="dropdown-item" style="color:#0056b3;"  href="{% url 'out' %}">Выйти</a>
+      <a class="dropdown-item" href="{% url 'out' %}" style="color:#0056b3;" >Выйти</a>
     </div>
   </li>
     {% else %}

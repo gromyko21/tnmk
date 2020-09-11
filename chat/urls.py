@@ -1,9 +1,11 @@
-from django.urls import path, re_path
-
+from django.urls import path
 from . import views
 
 
 urlpatterns = [
-    path('', views.index, name='url_index'),
-    re_path(r'^(?P<room_name>[^/]+)/$', views.room, name='room'),
+     path('', views.chat, name='chat_url'),
+     path('<str:slug>/', views.private_chat, name='private_chat_url'),
+    # path('', views.dialogs, name='dialogs'),
+    # path('create/<user_id>/', views.CreateDialogView, name='create_dialog'),
+    # path('<chat_id>/', views.MessagesView.as_view(), name='messages'),
 ]
