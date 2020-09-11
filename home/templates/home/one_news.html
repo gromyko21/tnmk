@@ -6,9 +6,11 @@
   <h1 style="text-align:center;margin-bottom:3%;">{{ articles.title }}</h1>
   <div class="card text-center">
     <div class="card-body" >
+      {% if articles.image %}
       <img style="width:200px" src="{{ articles.image.url }}">
       <img style="width:200px" src="{{ articles.image_two.url }}">
       <img style="width:200px" src="{{ articles.image_three.url }}">
+      {% endif %}
     </div>
   <div class="card text-center" >
     <p>{{ articles.text_article }}</p>

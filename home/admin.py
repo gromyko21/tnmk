@@ -6,9 +6,9 @@ class ArticlesAdmin(admin.ModelAdmin):
     '''
     Записи на главной странице
     '''
-    list_display = ('title', 'image_tag','text_article')
+    list_display = ('title','text_article')
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ('image_tag',)
+    #readonly_fields = ('image_tag',)
 
 
 admin.site.register(Article, ArticlesAdmin)
