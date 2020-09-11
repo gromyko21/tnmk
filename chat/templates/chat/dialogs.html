@@ -4,8 +4,8 @@
 {% block content %}
     {% for chat in chat %}
         <a href="{{ chat.slug  }}">{{ chat.user.profile.first_name }} {{ chat.user.profile.last_name }}</a></br>
-        <p>{{ chat.pub_date }}</p>
-        <p>{{ chat.message }}</p>
+        <p>{{ chat.message.0.pub_date }}</p>
+        <p>{{ chat.message.0.message }}</p>
     {% endfor %}
 
 {% endblock %}
