@@ -15,8 +15,8 @@ class Article(models.Model):
     image_two = models.ImageField(upload_to='Articles', verbose_name='Дополнительное изображение', blank=True, null=True)
     image_three = models.ImageField(upload_to='Articles', verbose_name='Дополнительное изображение', blank=True, null=True)
 
-    def image_tag(self):
-        return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))
+    #def image_tag(self):
+        #return mark_safe(u'<a href="{0}" target="_blank"><img src="{0}" width="150" height="130"/></a>'.format(self.image.url))
 
     def get_absolute_url(self):
         return reverse('articles_url', kwargs={'slug': self.slug})

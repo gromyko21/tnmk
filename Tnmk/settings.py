@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'chat',
     'home',
     'accounts',
@@ -60,7 +61,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Tnmk.wsgi.application'
-
+# REDIS_HOST = 'localhost'
+# REDIS_PORT = 6379
 
 
 # Database

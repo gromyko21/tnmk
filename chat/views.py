@@ -8,7 +8,12 @@ from django.db.models import Q
 
 #Перечисление всех чатов
 def chat(request):
-    chats = Profile.objects.order_by('-pk')
+    #chats = Profile.objects.order_by('-pk').filter(Q(title__icontains=search_news) | Q(text_article__icontains=search_news))
+    search_chats = request.GET.get('search_chats', '')
+    if search_chats:
+        chats = Profile.objects.order_by('-pk').filter(Q(first_name__icontains=search_chats) | Q(last_name__icontains=search_chats))
+    else:
+        chats = Profile.objects.order_by('-pk')
     message_users = []
     #Перебираем все профили пользователя
     for chat in chats:
