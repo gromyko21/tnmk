@@ -10,6 +10,7 @@ class Chat(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     creater = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, verbose_name="Участник", related_name='members')
+    #recipient = models.ForeignKey(Message, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.slug
@@ -20,6 +21,7 @@ class Chat(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.group_name)
         return super(Chat, self).save(*args, **kwargs)
+
 
 
 class Message(models.Model):

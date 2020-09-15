@@ -35,6 +35,11 @@ def chat(request):
         #Проверяем на наличие полученных\отправленных сообщений
         #Получаем последнее сообщение
     body_chat = Chat.objects.order_by('-pk').filter(Q(creater=request.user) | Q(members=request.user))
+
+    for chat in body_chat:
+        chat_id = get_object_or_404(Chat, slug=chat.slug)
+        message = Message.objects.order_by('-pk').filter(Q(recipient=chat_id))[0:1]
+        chat.message = message
     #last_message = Message.objects.filter('-pk')
         #Если есть сообщения - добавляем пользователя в список чатов
         # if body_chat:
