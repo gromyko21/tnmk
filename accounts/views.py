@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from chat.models import Chat, Message
 
 
 #Авторизация пользователей
@@ -139,7 +140,10 @@ def any_user(request, slug):
     any_user = get_object_or_404(Profile, slug__iexact=slug)
     #Новости на личной странице пользователя
     user_context = Post.objects.filter(author=any_user.user)
+   # new_chat = Chat.objects.create()
+    #new_message = Message.objects.filter(author=any_user.user)#, recipient=new_chat)
     context = {
+             #'new_chat': new_message,
              'user_data': any_user,
              'user_context': user_context}
     return render(request, 'accounts/profile_user.html', context)

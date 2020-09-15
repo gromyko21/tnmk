@@ -11,3 +11,13 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = ('message',)
+
+
+class ChatForm(forms.ModelForm):
+    '''
+    Форма для создания нового чата
+    '''
+
+    class Meta:
+        model = Chat
+        fields = ('group_name', 'members')
