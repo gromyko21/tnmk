@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'rest_framework',
     'chat',
     'home',
@@ -64,9 +65,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Tnmk.wsgi.application'
+ASGI_APPLICATION = "Tnmk.routing.application"
 # REDIS_HOST = 'localhost'
 # REDIS_PORT = 6379
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

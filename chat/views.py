@@ -4,6 +4,9 @@ from accounts.models import Profile
 from .forms import MessageForm, ChatForm
 from django.http import HttpResponseNotFound
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.utils.safestring import mark_safe
+import json
 
 
 def new_chat(request):
@@ -54,6 +57,7 @@ def chat(request):
 
 
 # Страница личного чата
+@login_required
 def private_chat(request, slug):
     chat_id = get_object_or_404(Chat, slug=slug)
     body_chat = Message.objects.order_by('pk').filter(recipient=chat_id)
@@ -69,8 +73,10 @@ def private_chat(request, slug):
             HttpResponseNotFound("<h2>Введены неверные данные</h2>")
     else:
         message_form = MessageForm()
-    return render(request, 'chat/private_chat.html', {
-                                                      'chat_id': chat_id,
-                                                      'body_chat': body_chat,
-                                                      'message_form': message_form,
-                                                      })
+    return render(request, 'chat/room.html', {
+                                              'chat_id': chat_id,
+                                              'body_chat': body_chat,
+                                              'message_form': message_form,
+                                              'room_name_json': mark_safe(json.dumps(slug)),
+                                              'username': mark_safe(json.dumps(request.user.username)),
+                                              })
