@@ -59,24 +59,24 @@ def chat(request):
 # Страница личного чата
 @login_required
 def private_chat(request, slug):
-    chat_id = get_object_or_404(Chat, slug=slug)
-    body_chat = Message.objects.order_by('pk').filter(recipient=chat_id)
-    if request.method == 'POST':
-        message_form = MessageForm(request.POST)
-        if message_form.is_valid():
-            message_form.instance.author = request.user
-            message_form.instance.recipient = chat_id
-            message_form.save()
-            for_redirect = f"/chat/{chat_id}"
-            return redirect(for_redirect)
-        else:
-            HttpResponseNotFound("<h2>Введены неверные данные</h2>")
-    else:
-        message_form = MessageForm()
-    return render(request, 'chat/room.html', {
-                                              'chat_id': chat_id,
-                                              'body_chat': body_chat,
-                                              'message_form': message_form,
+    # chat_id = get_object_or_404(Chat, slug=slug)
+    # body_chat = Message.objects.order_by('pk').filter(recipient=chat_id)
+    # if request.method == 'POST':
+    #     message_form = MessageForm(request.POST)
+    #     if message_form.is_valid():
+    #         message_form.instance.author = request.user
+    #         message_form.instance.recipient = chat_id
+    #         message_form.save()
+    #         for_redirect = f"/chat/{chat_id}"
+    #         return redirect(for_redirect)
+    #     else:
+    #         HttpResponseNotFound("<h2>Введены неверные данные</h2>")
+    # else:
+    #     message_form = MessageForm()
+    return render(request, 'chat/private_chat.html', {
+                                              # 'chat_id': chat_id,
+                                              # 'body_chat': body_chat,
+                                              # 'message_form': message_form,
                                               'room_name_json': mark_safe(json.dumps(slug)),
                                               'username': mark_safe(json.dumps(request.user.username)),
                                               })

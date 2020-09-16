@@ -30,7 +30,7 @@ class Message(models.Model):
     recipient = models.ForeignKey(Chat, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
     #members = models.ManyToManyField(User, verbose_name=_("Участник"))
     content = models.TextField("Сообщение")
-    timestamp = models.DateTimeField('Дата сообщения', default=timezone.now)
+    timestamp = models.DateTimeField('Дата сообщения', auto_now=True)
     is_readed = models.BooleanField('Прочитано', default=False)
 
     class Meta:

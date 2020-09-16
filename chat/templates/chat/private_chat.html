@@ -1,57 +1,49 @@
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Личные cообщения{% endblock %}
+{% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
+
 <div class="mx-auto" style="width: 35%;">
-  {% for chat in body_chat %}
-    <div class="card text-center">
+<!--  {% for chat in body_chat %}-->
+<!--    <div class="card text-center">-->
+<!--    <div class="media" >-->
+<!--      <img src="/media/{{ chat.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">-->
+<!--      <div class="media-body">-->
+<!--        <h7 class="mt-0">-->
+<!--          <a href="/account/{{ chat.author.profile.slug  }}" style="float:left;">-->
+<!--          {{ chat.author.profile.first_name }} {{ chat.author.profile.last_name }}-->
+<!--          </a>-->
+<!--          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ chat.pub_date }}</p>-->
+<!--        </h7>-->
+<!--      </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    {% endfor %}-->
+
+<div id="chat-log">
+  {% comment %}
+  <div class="card text-center">
     <div class="media" >
-      <img src="/media/{{ chat.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+      <img src="/media/" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
       <div class="media-body">
         <h7 class="mt-0">
           <a href="/account/{{ chat.author.profile.slug  }}" style="float:left;">
-          {{ chat.author.profile.first_name }} {{ chat.author.profile.last_name }}
+          Имя Фамилия
           </a>
-          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ chat.pub_date }}</p>
+          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;Сообщение</p>
         </h7>
-                <ul id="chat-log">
-          {% comment %} <li class="sent">
-            <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-          </li>
-          <li class="replies">
-            <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-            <p>When you're backed against the wall, break the god damn thing down.</p>
-          </li> {% endcomment %}
-        </ul>
       </div>
-        </div>
     </div>
-    {% endfor %}
-      <div class="messages">
-        <ul id="chat-log">
-          {% comment %} <li class="sent">
-            <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-            <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-          </li>
-          <li class="replies">
-            <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-            <p>When you're backed against the wall, break the god damn thing down.</p>
-          </li> {% endcomment %}
-        </ul>
-      </div>
-      <div class="message-input">
-        <div class="wrap">
+  </div>
+  {% endcomment %}
+</div>
+
 <form method="post">
     {% csrf_token %}
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
-          <i class="fa fa-paper-plane" aria-hidden="true"></i>
-        </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
@@ -105,21 +97,20 @@
     }
 
     function createMessage(data) {
-      var author = data['author'];
-      var msgListTag = document.createElement('li');
-      var imgTag = document.createElement('img');
-      var pTag = document.createElement('p');
-      pTag.textContent = data.content;
-      imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
 
+      var author = data['author'],
+          first_name = data['first_name'],
+          image = data['image'],
+          slug = data['slug'],
+          timestamp = data['timestamp'],
+          owner_class = 'text-right';
       if (author === username) {
-        msgListTag.className = 'sent';
-      } else {
-        msgListTag.className = 'replies';
+        owner_class = 'text-left';
       }
-      msgListTag.appendChild(imgTag);
-      msgListTag.appendChild(pTag);
-      document.querySelector('#chat-log').appendChild(msgListTag);
+
+      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</div></div></div>';
+      $('#chat-log').append(text);
+
     }
 
 </script>
