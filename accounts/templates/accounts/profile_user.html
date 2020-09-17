@@ -7,7 +7,18 @@
     <div class="row">
       <div class="col">
         <img src='/media/{{ user_data.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
-        <a class="btn btn-outline-primary" style="width:200px;" href="{% url 'chat_url' %}">Написать</a>
+        <div>
+          <form method="post">
+            {% csrf_token %}
+<!--            {{ start_chat }}-->
+            <input type="hidden" name="group_name" maxlength="50" required="" id="id_group_name" value="{{ user_data.first_name }} {{ user_data.last_name }}">
+            <select  name="members" required="" id="id_members" multiple="" style="display:none">
+                <option selected value="{{ user_data.user.id }}">{{ user_data.user.username }}</option>
+                <option selected value="{{ user.id }}">{{ user }}</option>
+            </select>
+        <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Написать</button>
+</form>
+        </div>
       </div>
       <div class="col">
         <h4>{{ user_data.first_name }} {{ user_data.last_name }}</h4>

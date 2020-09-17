@@ -141,19 +141,25 @@ def any_user(request, slug):
     any_user = get_object_or_404(Profile, slug__iexact=slug)
     #Новости на личной странице пользователя
     user_context = Post.objects.filter(author=any_user.user)
-
-    # if request.method == 'POST':
-    #     new_chat_form = ChatForm(request.POST)
-    #     if new_chat_form.is_valid():
-    #         new_chat_form.instance.creater = request.user
-    #         new_chat_form.instance.members = any_user
-    #         new_chat_form.save()
-    #         return redirect('chat_url')
-    #     else:
-    #         HttpResponseNotFound("<h2>Введены неверные данные</h2>")
-    # else:
-    #     new_chat_form = ChatForm()
+    if request.method == 'POST':
+        new_chat_form = ChatForm(request.POST)
+        chat_prov = Chat.objects.filter((Q(creater=request.user) & Q(members=any_user.user.id)) | (Q(creater=any_user.user.id) & Q(members=request.user)))
+        if chat_prov:
+            return redirect('chat_url')#(f"'chat_url'{any_user.slug}")
+        else:
+            if new_chat_form.is_valid():
+                new_chat_form.instance.creater = request.user
+                #new_chat_form.instance.members = any_user.user
+                #new_chat_form.instance.group_name = str(any_user.first_name) +' '+ str(any_user.last_name)
+                new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
+                new_chat_form.save()
+                return redirect('chat_url')
+            else:
+                HttpResponseNotFound("<h2>Введены неверные данные</h2>")
+    else:
+        new_chat_form = ChatForm()
     context = {
              'user_data': any_user,
-             'user_context': user_context}
+             'user_context': user_context,
+             'start_chat': new_chat_form}
     return render(request, 'accounts/profile_user.html', context)

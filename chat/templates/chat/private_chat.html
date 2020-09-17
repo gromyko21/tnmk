@@ -5,22 +5,13 @@
 {% block content %}
 
 <div class="mx-auto" style="width: 35%;">
-<!--  {% for chat in body_chat %}-->
-<!--    <div class="card text-center">-->
-<!--    <div class="media" >-->
-<!--      <img src="/media/{{ chat.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">-->
-<!--      <div class="media-body">-->
-<!--        <h7 class="mt-0">-->
-<!--          <a href="/account/{{ chat.author.profile.slug  }}" style="float:left;">-->
-<!--          {{ chat.author.profile.first_name }} {{ chat.author.profile.last_name }}-->
-<!--          </a>-->
-<!--          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;{{ chat.pub_date }}</p>-->
-<!--        </h7>-->
-<!--      </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    {% endfor %}-->
-
+  {% for name in list_users %}
+    Создатель: <a href="{{ name.creater.profile.get_absolute_url }}"> {{ name.creater.profile.first_name }} {{ name.creater.profile.last_name }}</a><br>
+    Участники:<br>
+    {% for list in name.members.all %}
+    <a href="{{ list.profile.get_absolute_url }}"> {{ list.profile.first_name }} {{ list.profile.last_name }}</a><br>
+    {% endfor %}
+  {% endfor %}
 <div id="chat-log">
   {% comment %}
   <div class="card text-center">
@@ -29,7 +20,6 @@
       <div class="media-body">
         <h7 class="mt-0">
           <a href="/account/{{ chat.author.profile.slug  }}" style="float:left;">
-          Имя Фамилия
           </a>
           <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;Сообщение</p>
         </h7>

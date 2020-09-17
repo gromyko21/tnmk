@@ -5,6 +5,9 @@ import json
 from .models import Message, Chat
 from django.shortcuts import get_object_or_404
 from .views import private_chat
+from datetime import datetime
+
+
 User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
@@ -48,7 +51,7 @@ class ChatConsumer(WebsocketConsumer):
             'image': message.author.profile.image.url,
             'slug': message.author.profile.slug,
             'content': message.content,
-            'timestamp': str(message.timestamp),
+            'timestamp': str(message.timestamp)[:16]
         }
 
     commands = {
