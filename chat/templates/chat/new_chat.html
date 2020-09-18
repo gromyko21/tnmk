@@ -2,13 +2,12 @@
 {% load static %}
 {% block title %}Новый чат{% endblock %}
 {% block content %}
-<form method="post">
+<form method="POST" enctype=multipart/form-data>
     {% csrf_token %}
   имя чата
     {{ new_chat.members }}
     {{ new_chat.group_name }}
-<!--  {{ new_chat.slug }}-->
-<!--  {{ new_chat.creater }}-->
+    {{ new_chat.image_chat }}
     <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
 {% if chat %}

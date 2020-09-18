@@ -1,25 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import reverse
-from slugify import slugify
 
 
 class Chat(models.Model ):
     group_name = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50, unique=True)
     creater = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, verbose_name="Участник", related_name='members')
+    image_chat = models.ImageField(null=True, blank=True, upload_to="image_chat", verbose_name='Фото беседы')
 
     def __str__(self):
-        return self.slug
+        return self.group_name
 
     def get_absolute_url(self):
-        return reverse('private_chat_url', kwargs={'slug': self.slug})
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.group_name)
-        return super(Chat, self).save(*args, **kwargs)
-
+        return reverse('private_chat_url', kwargs={'id': self.id})
 
 
 class Message(models.Model):

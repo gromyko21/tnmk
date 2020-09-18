@@ -13,7 +13,7 @@ admin.site.register(Message, MessageAdmin)
 
 
 class ChatAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("group_name", 'creater')}
+    #prepopulated_fields = {"slug": ("group_name", 'creater')}
     pass
 
 

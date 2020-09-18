@@ -10,4 +10,5 @@ urlpatterns = [
     path('my_page/edit_post/<int:id>/', views.update_post, name='edit_post_url'),
     path('my_page/delete_post/<int:id>/', views.delete_post, name='delete_post_url'),
     path('<str:slug>/', views.any_user, name='user_url'),
+    #path('test/', views.any_user, name='user_url'),
 ]

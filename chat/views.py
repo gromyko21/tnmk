@@ -7,18 +7,15 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 import json
-from django.db.models import Sum
 from django.db.models import Count
-from django.db.models import Avg
 
 
 @login_required
 def new_chat(request):
     if request.method == 'POST':
-        new_chat_form = ChatForm(request.POST)
+        new_chat_form = ChatForm(request.POST, request.FILES,)
         if new_chat_form.is_valid():
             new_chat_form.instance.creater = request.user
-            #new_chat_form.instance.members.ste = request.user
             new_chat_form.save()
             return redirect('chat_url')
         else:
@@ -29,7 +26,7 @@ def new_chat(request):
                   {'new_chat': new_chat_form})
 
 
-#Перечисление всех чатов
+# Перечисление всех чатов
 @login_required
 def chat(request):
     search_chats = request.GET.get('search_chats', '')
@@ -37,14 +34,17 @@ def chat(request):
         chats = Profile.objects.order_by('-pk').filter(Q(first_name__icontains=search_chats) | Q(last_name__icontains=search_chats))
     else:
         chats = Profile.objects.order_by('-pk')
-        #Получаем последнее сообщение
+        # Получаем последнее сообщение
     body_chat = Chat.objects.order_by('-pk').filter(Q(members=request.user))
 
     for chat in body_chat:
-        chat_id = get_object_or_404(Chat, slug=chat.slug)
+        chat_id = get_object_or_404(Chat, id=chat.id)
         message = Message.objects.order_by('-pk').filter(Q(recipient=chat_id))[0:1]
         chat.message = message
-        count = Chat.objects.filter(id=chat_id.id).aggregate(Count('members'))
+        # Получаем количество получателей в комнате
+        # Чтобы решить личный чат это или беседа
+        count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+        count = count[0].members__count
         chat.count = count
 
     return render(request, 'chat/dialogs.html',
@@ -54,10 +54,10 @@ def chat(request):
 
 # Страница личного чата
 @login_required
-def private_chat(request, slug):
-    list_users = Chat.objects.filter(slug=slug)
+def private_chat(request, id):
+    list_users = Chat.objects.filter(id=id)
     return render(request, 'chat/private_chat.html', {
-                                              'list_users':list_users,
-                                              'room_name_json': mark_safe(json.dumps(slug)),
+                                              'list_users': list_users,
+                                              'room_name_json': mark_safe(json.dumps(id)),
                                               'username': mark_safe(json.dumps(request.user.username)),
                                               })

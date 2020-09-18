@@ -4,16 +4,15 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from .models import Message, Chat
 from django.shortcuts import get_object_or_404
-from .views import private_chat
-from datetime import datetime
 
 
 User = get_user_model()
 
+
 class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
-        chat_id = get_object_or_404(Chat, slug=self.room_name)
+        chat_id = get_object_or_404(Chat, id=self.room_name)
         messages = Message.objects.order_by('pk').filter(recipient=chat_id)
         content = {
             'command': 'messages',
@@ -26,7 +25,7 @@ class ChatConsumer(WebsocketConsumer):
         room_name = data['room_name']
         author_user = User.objects.filter(username=author)[0]
 
-        chat = Chat.objects.get(slug=room_name)
+        chat = Chat.objects.get(id=room_name)
 
         message = Message.objects.create(
             author=author_user,
@@ -49,7 +48,7 @@ class ChatConsumer(WebsocketConsumer):
             'author': message.author.username,
             'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
             'image': message.author.profile.image.url,
-            'slug': message.author.profile.slug,
+            'id': message.author.profile.id,
             'content': message.content,
             'timestamp': str(message.timestamp)[:16]
         }

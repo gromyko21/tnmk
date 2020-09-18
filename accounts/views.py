@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from chat.models import Chat, Message
 from chat.forms import ChatForm
+from django.db.models import Count
+
 
 
 #Авторизация пользователей
@@ -138,20 +140,39 @@ def list_users(request):
 #Личные страницы пользователей
 def any_user(request, slug):
     #Получение данных профиля конкретного пользователя
-    any_user = get_object_or_404(Profile, slug__iexact=slug)
+    any_user = get_object_or_404(Profile, slug=slug)
     #Новости на личной странице пользователя
     user_context = Post.objects.filter(author=any_user.user)
     if request.method == 'POST':
         new_chat_form = ChatForm(request.POST)
-        chat_prov = Chat.objects.filter((Q(creater=request.user) & Q(members=any_user.user.id)) | (Q(creater=any_user.user.id) & Q(members=request.user)))
+        chat_prov = Chat.objects.filter((Q(creater=request.user) & Q(members=any_user.user.id)) |
+                                        (Q(creater=any_user.user.id) & Q(members=request.user)))
+        # Ищем личный чат между 2 пользователями
         if chat_prov:
-            return redirect('chat_url')#(f"'chat_url'{any_user.slug}")
+            count = 0
+            for i in chat_prov:
+                # Если хоть один личный чат существует - не создаем комнату
+                if i.members.count() == 2:
+                    count = 2
+
+            if count == 2:
+                return redirect('chat_url')
+            else:
+                if new_chat_form.is_valid():
+                    new_chat_form.instance.creater = request.user
+                    #new_chat_form.instance.members = any_user.user
+                    # new_chat_form.instance.group_name = any_user.user.username
+                    #new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
+                    new_chat_form.save()
+                    return redirect('chat_url')
+                else:
+                    HttpResponseNotFound("<h2>Введены неверные данные</h2>")
         else:
             if new_chat_form.is_valid():
                 new_chat_form.instance.creater = request.user
                 #new_chat_form.instance.members = any_user.user
-                #new_chat_form.instance.group_name = str(any_user.first_name) +' '+ str(any_user.last_name)
-                new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
+                # new_chat_form.instance.group_name = any_user.user.username
+                #new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
                 new_chat_form.save()
                 return redirect('chat_url')
             else:

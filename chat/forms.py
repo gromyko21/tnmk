@@ -20,4 +20,4 @@ class ChatForm(forms.ModelForm):
 
     class Meta:
         model = Chat
-        fields = ('group_name', 'members')
+        fields = ('group_name', 'members', 'image_chat')
