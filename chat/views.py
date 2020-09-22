@@ -49,6 +49,8 @@ def chat(request):
 
     return render(request, 'chat/dialogs.html',
                   {'chat': body_chat,
+                   # 'room_name_json': mark_safe(json.dumps(id)),
+                    'username': mark_safe(json.dumps(request.user.id)),
                    })
 
 

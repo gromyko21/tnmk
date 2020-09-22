@@ -137,11 +137,11 @@ def list_users(request):
     return render(request, 'accounts/list_users.html',data)
 
 
-#Личные страницы пользователей
+# Личные страницы пользователей
 def any_user(request, slug):
-    #Получение данных профиля конкретного пользователя
+    # Получение данных профиля конкретного пользователя
     any_user = get_object_or_404(Profile, slug=slug)
-    #Новости на личной странице пользователя
+    # Новости на личной странице пользователя
     user_context = Post.objects.filter(author=any_user.user)
     if request.method == 'POST':
         new_chat_form = ChatForm(request.POST)
@@ -149,12 +149,10 @@ def any_user(request, slug):
                                         (Q(creater=any_user.user.id) & Q(members=request.user)))
         # Ищем личный чат между 2 пользователями
         if chat_prov:
-            count = 0
             for i in chat_prov:
                 # Если хоть один личный чат существует - не создаем комнату
                 if i.members.count() == 2:
                     count = 2
-
             if count == 2:
                 return redirect('chat_url')
             else:
@@ -162,7 +160,6 @@ def any_user(request, slug):
                     new_chat_form.instance.creater = request.user
                     #new_chat_form.instance.members = any_user.user
                     # new_chat_form.instance.group_name = any_user.user.username
-                    #new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
                     new_chat_form.save()
                     return redirect('chat_url')
                 else:
@@ -182,5 +179,6 @@ def any_user(request, slug):
     context = {
              'user_data': any_user,
              'user_context': user_context,
-             'start_chat': new_chat_form}
+             'start_chat': new_chat_form
+                }
     return render(request, 'accounts/profile_user.html', context)
