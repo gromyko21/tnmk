@@ -17,21 +17,24 @@
     <a style="width:100%;" class="btn btn-outline-primary" href="{% url 'new_chat_url' %}">Начать новый чат</a>
   {% for chat in chat %}
     {% if chat.count >= 3 %}
+
     <div class="card text-center"  onClick="document.location='{{ chat.id }}'">
     <div class="media" >
       <img src="/media/{{ chat.image_chat }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
       <div class="media-body">
-        <h7 class="mt-0" {% if not last_message.is_readed %}unreaded{% endif %}>
+        <h7 class="mt-0" >
             <a href="{{ chat.id }}" style="float:left;"> {{ chat.group_name }}</a></br>
           <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}
-              &#160; &#160;{{ chat.message.0.timestamp }}</p>
+              &#160; &#160;{{ chat.message.0.timestamp }} </p>
         </h7>
-        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }}</p>
+        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} {{ chat.message.is_readed }} </p>
       </div>
         </div>
     </div>
+
 {% else %}
     {% if user == chat.members.all.0 %}
+    {% if chat.message.0.is_readed == True %}
     <div class="card text-center"  onClick="document.location='{{ chat.id }}'">
     <div class="media" >
       <img src="/media/{{ chat.members.all.1.profile.image  }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
@@ -41,26 +44,27 @@
           <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}
               &#160; &#160;{{ chat.message.0.timestamp }}</p>
         </h7>
-        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }}</p>
+        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} Сообщение прочитано</p>
       </div>
         </div>
     </div>
     {% else %}
         <div class="card text-center"  onClick="document.location='{{ chat.id }}'">
-    <div class="media" >
-      <img src="/media/{{ chat.members.all.0.profile.image  }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+    <div class="media"  style="background:#B0E0E6">
+      <img src="/media/{{ chat.members.all.1.profile.image  }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
       <div class="media-body">
-        <h7 class="mt-0">
-            <a href="{{ chat.id }}" style="float:left;"> {{ chat.members.all.0 }}</a></br>
+        <h7 class="mt-0" >
+            <a href="{{ chat.id }}" style="float:left;"> {{ chat.members.all.1 }}</a></br>
           <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}
               &#160; &#160;{{ chat.message.0.timestamp }}</p>
         </h7>
-        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }}</p>
+        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} Сообщение не прочитано</p>
       </div>
         </div>
     </div>
     {% endif %}
-    {%endif %}
+    {% endif %}
+    {% endif %}
         {% endfor %}
 </div>
 
@@ -84,29 +88,31 @@
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 
 <script>
-    var roomName = '';
-    var username = {{ username }};
+    var roomName = {{ room_name_json }};
+    var username = {{ user.id }};
 
-    var chatSocket = new ReconnectingWebSocket(
+    var userSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/user/' + username + '/');
 
-    chatSocket.onopen = function(e) {
+    userSocket.onopen = function(e) {
       fetchMessages();
     }
 
-    chatSocket.onmessage = function(e) {
+    userSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         if (data['command'] === 'messages') {
           for (let i=0; i<data['messages'].length; i++) {
             createMessage(data['messages'][i]);
+
           }
         } else if (data['command'] === 'new_message'){
           createMessage(data['message']);
-        }
+
+        }console.log(data)
     };
 
-    chatSocket.onclose = function(e) {
+    userSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
     };
 
@@ -123,13 +129,14 @@
             'command': 'new_message',
             'message': message,
             'from': username,
-<!--            'room_name': roomName-->
+            'room_name': username
+
         }));
         messageInputDom.value = '';
     };
 
     function fetchMessages() {
-      chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
+      userSocket.send(JSON.stringify({'command': 'fetch_messages' }));
     }
 
     function createMessage(data) {
@@ -138,17 +145,17 @@
           first_name = data['first_name'],
           image = data['image'],
           id = data['id'],
+          slug = data['slug'],
           room_id = data['room_id'],
           timestamp = data['timestamp'],
           owner_class = 'text-right';
       if (author === username) {
         owner_class = 'text-left';
       }
-console.log(room_id)
-      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+id+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</div></div></div>';
-      $('#chat-log').append(text);
 
-    }
+      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</div></div></div>';
+      $('#chat-log').append(text);
+   }
 
 </script>
 {% endblock %}

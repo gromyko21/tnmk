@@ -30,8 +30,12 @@
   {% endcomment %}
 </div>
 
-<form method="post">
+<form method="post"   enctype="multipart/form-data">
     {% csrf_token %}
+<!--  Загрузка фото:</br>-->
+<!--    <input type="file" name="image_message" accept="image/*" id="id_image_message">-->
+<!--    Загрузка фала:</br>-->
+<!--    <input  type="file" name="file_message" id="id_file_message">-->
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
@@ -46,8 +50,15 @@
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
+    var userSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/user/1/' );
+
     chatSocket.onopen = function(e) {
       fetchMessages();
+    }
+    userSocket.onopen = function(e) {
+
     }
 
     chatSocket.onmessage = function(e) {
@@ -79,6 +90,12 @@
             'message': message,
             'from': username,
             'room_name': roomName
+        }))
+        userSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+            'room_name': roomName
         }));
         messageInputDom.value = '';
     };
@@ -92,14 +109,16 @@
       var author = data['author'],
           first_name = data['first_name'],
           image = data['image'],
+<!--          image_message = data['image_message'],-->
+<!--          file_message = data['file_message'],-->
+          slug = data['slug'],
           id = data['id'],
           timestamp = data['timestamp'],
           owner_class = 'text-right';
       if (author === username) {
         owner_class = 'text-left';
       }
-console.log(id)
-      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+id+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</div></div></div>';
+      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</h7>></div></div></div>';
       $('#chat-log').append(text);
 
     }

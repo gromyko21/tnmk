@@ -3,7 +3,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
 from .models import Message, Chat
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 
 User = get_user_model()
@@ -13,7 +13,8 @@ class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
         chat_id = get_object_or_404(Chat, id=self.room_name)
-        messages = Message.objects.order_by('pk').filter(recipient=chat_id)
+        messages = Message.objects.order_by('pk').filter(recipient=chat_id)[:10]
+        #messages.filter().update(is_readed=True)
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -27,10 +28,14 @@ class ChatConsumer(WebsocketConsumer):
 
         chat = Chat.objects.get(id=room_name)
 
+
         message = Message.objects.create(
             author=author_user,
             content=data['message'],
-            recipient=chat)
+            # image_message=data['message'],
+            # file_message=data['message'],
+            recipient=chat,)
+           # is_readed=read_message)
         content = {
             'command': 'new_message',
             'message': self.message_to_json(message)
@@ -49,7 +54,10 @@ class ChatConsumer(WebsocketConsumer):
             'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
             'image': message.author.profile.image.url,
             'id': message.author.profile.id,
+            'slug': message.author.profile.slug,
             'content': message.content,
+            # 'image_message': message.image_message,
+            # 'file_message': message.file_message,
             'timestamp': str(message.timestamp)[:16]
         }
 
@@ -61,8 +69,16 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+        chat_id = get_object_or_404(Chat, id=self.room_name)
+        messages = Message.objects.order_by('pk').filter(recipient=chat_id)
+        self.user_name = 1
+        self.user = 'user_%s' % self.user_name
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
+            self.channel_name
+        )
+        async_to_sync(self.channel_layer.group_add)(
+            self.user,
             self.channel_name
         )
         self.accept()
@@ -86,6 +102,13 @@ class ChatConsumer(WebsocketConsumer):
                 'message': message
             }
         )
+        async_to_sync(self.channel_layer.group_send)(
+            self.user,
+            {
+                'type': 'chat_message',
+                'message': message
+            }
+        )
 
     def send_message(self, message):
         self.send(text_data=json.dumps(message))
@@ -100,14 +123,14 @@ class AllChatsConsumer(WebsocketConsumer):
     def fetch_messages(self, data):
         # body_chat = Chat.objects.order_by('-pk').filter()
         # Получаем последнее сообщение
-        body_chat = Chat.objects.order_by('pk')[:1]
+        body_chat = Chat.objects.filter(members=self.scope['user'])
 
-        for chat in body_chat:
-            chat_id = get_object_or_404(Chat, id=chat.id)
-            message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
-            chat.message = message
-        # chat_id = get_object_or_404(Chat)
-        messages = Message.objects.order_by('pk').filter(recipient=body_chat)
+        # for chat in body_chat:
+        #     chat_id = get_object_or_404(Chat, id=chat.id)
+        #     message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+        #     chat.message = message
+        chat_id = get_list_or_404(Chat)
+        messages = Message.objects.order_by('-pk')
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -119,7 +142,7 @@ class AllChatsConsumer(WebsocketConsumer):
         room_name = data['room_name']
         author_user = User.objects.filter(username=author)[0]
 
-        chat = Chat.objects.get(id=room_name)
+        chat = Chat.objects.all()#(id=room_name)
 
         message = Message.objects.create(
             author=author_user,
@@ -142,6 +165,7 @@ class AllChatsConsumer(WebsocketConsumer):
             'author': message.author.username,
             'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
             'image': message.author.profile.image.url,
+            'slug': message.author.profile.slug,
             'id': message.author.profile.id,
             'room_id': message.recipient.id,
             'content': message.content,

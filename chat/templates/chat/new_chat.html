@@ -4,9 +4,11 @@
 {% block content %}
 <form method="POST" enctype=multipart/form-data>
     {% csrf_token %}
-  имя чата
+    Выбрать получателей(нажмите ctrl и не забудьте указать получателем себя :))
     {{ new_chat.members }}
+    Название группы:
     {{ new_chat.group_name }}
+    Главное изображение группы:
     {{ new_chat.image_chat }}
     <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>

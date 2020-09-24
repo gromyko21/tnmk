@@ -47,10 +47,12 @@ def chat(request):
         count = count[0].members__count
         chat.count = count
 
+    # Непрочитанные сообщени
+
     return render(request, 'chat/dialogs.html',
                   {'chat': body_chat,
-                   # 'room_name_json': mark_safe(json.dumps(id)),
-                    'username': mark_safe(json.dumps(request.user.id)),
+                    'room_name_json': mark_safe(json.dumps(request.user.id)),
+                    'username': mark_safe(json.dumps(request.user.username)),
                    })
 
 
@@ -59,7 +61,9 @@ def chat(request):
 def private_chat(request, id):
     list_users = Chat.objects.filter(id=id)
     return render(request, 'chat/private_chat.html', {
+
                                               'list_users': list_users,
                                               'room_name_json': mark_safe(json.dumps(id)),
+                                              #'image_message':json.dumps(str(Message.image_message)),
                                               'username': mark_safe(json.dumps(request.user.username)),
                                               })
