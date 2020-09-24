@@ -70,15 +70,18 @@ class ChatConsumer(WebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
 
+        body_chat = Chat.objects.order_by('-pk').filter(id=self.room_name)
+        body_chat = body_chat[0].members.all()
 
-        # self.user_name = members
-        self.user = 'user_2'
+        for user in body_chat:
+            async_to_sync(self.channel_layer.group_add)(
+                'user_%s' % user.id,
+                self.channel_name
+            )
+
+
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
-            self.channel_name
-        )
-        async_to_sync(self.channel_layer.group_add)(
-            self.user,
             self.channel_name
         )
         self.accept()
@@ -102,13 +105,17 @@ class ChatConsumer(WebsocketConsumer):
                 'message': message
             }
         )
-        async_to_sync(self.channel_layer.group_send)(
-            self.user,
-            {
-                'type': 'chat_message',
-                'message': message
-            }
-        )
+        body_chat = Chat.objects.order_by('-pk').filter(id=self.room_name)
+        body_chat = body_chat[0].members.all()
+
+        for user in body_chat:
+            async_to_sync(self.channel_layer.group_send)(
+                'user_%s' % user.id,
+                {
+                    'type': 'chat_message',
+                    'message': message
+                }
+            )
 
     def send_message(self, message):
         self.send(text_data=json.dumps(message))
@@ -142,7 +149,7 @@ class AllChatsConsumer(WebsocketConsumer):
         room_name = data['room_name']
         author_user = User.objects.filter(username=author)[0]
 
-        chat = Chat.objects.all()#(id=room_name)
+        chat = Chat.objects.get(id=room_name)
 
         message = Message.objects.create(
             author=author_user,

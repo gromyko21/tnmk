@@ -29,6 +29,16 @@ def new_chat(request):
 # Перечисление всех чатов
 @login_required
 def chat(request):
+    #
+    # body_chat = Chat.objects.order_by('-pk').filter(id=1)
+    #
+    # body_chat = body_chat[0].members.all()
+    #
+    # for user in body_chat:
+    #     l = user.id
+    #
+    # return render(request, 'chat/test.html', {'body_chat': l})
+
     search_chats = request.GET.get('search_chats', '')
     if search_chats:
         chats = Profile.objects.order_by('-pk').filter(Q(first_name__icontains=search_chats) | Q(last_name__icontains=search_chats))
@@ -59,6 +69,7 @@ def chat(request):
 # Страница личного чата
 @login_required
 def private_chat(request, id):
+
     list_users = Chat.objects.filter(id=id)
     return render(request, 'chat/private_chat.html', {
 
@@ -67,3 +78,4 @@ def private_chat(request, id):
                                               #'image_message':json.dumps(str(Message.image_message)),
                                               'username': mark_safe(json.dumps(request.user.username)),
                                               })
+
