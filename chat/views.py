@@ -29,16 +29,6 @@ def new_chat(request):
 # Перечисление всех чатов
 @login_required
 def chat(request):
-    #
-    # body_chat = Chat.objects.order_by('-pk').filter(id=1)
-    #
-    # body_chat = body_chat[0].members.all()
-    #
-    # for user in body_chat:
-    #     l = user.id
-    #
-    # return render(request, 'chat/test.html', {'body_chat': l})
-
     search_chats = request.GET.get('search_chats', '')
     if search_chats:
         chats = Profile.objects.order_by('-pk').filter(Q(first_name__icontains=search_chats) | Q(last_name__icontains=search_chats))
@@ -46,10 +36,9 @@ def chat(request):
         chats = Profile.objects.order_by('-pk')
         # Получаем последнее сообщение
     body_chat = Chat.objects.order_by('-pk').filter(Q(members=request.user))
-
     for chat in body_chat:
         chat_id = get_object_or_404(Chat, id=chat.id)
-        message = Message.objects.order_by('-pk').filter(Q(recipient=chat_id))[0:1]
+        message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
         chat.message = message
         # Получаем количество получателей в комнате
         # Чтобы решить личный чат это или беседа
@@ -57,12 +46,14 @@ def chat(request):
         count = count[0].members__count
         chat.count = count
 
+
     # Непрочитанные сообщени
 
     return render(request, 'chat/dialogs.html',
                   {'chat': body_chat,
-                    'room_name_json': mark_safe(json.dumps(request.user.id)),
-                    'username': mark_safe(json.dumps(request.user.username)),
+                   #'rr': body_chat[0].message[0].author.profile.first_name,
+                   'room_name_json': mark_safe(json.dumps(request.user.id)),
+                   'username': mark_safe(json.dumps(request.user.username)),
                    })
 
 

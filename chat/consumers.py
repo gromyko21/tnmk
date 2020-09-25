@@ -4,6 +4,7 @@ from channels.generic.websocket import WebsocketConsumer
 import json
 from .models import Message, Chat
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.db.models import Count
 
 
 User = get_user_model()
@@ -128,16 +129,24 @@ class ChatConsumer(WebsocketConsumer):
 class AllChatsConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
-        # body_chat = Chat.objects.order_by('-pk').filter()
         # Получаем последнее сообщение
-        body_chat = Chat.objects.filter(members=self.scope['user'])
+        # body_chat = Chat.objects.filter(members=self.scope['user'])
+        #
+        # chat_id = get_list_or_404(Chat)
 
-        # for chat in body_chat:
-        #     chat_id = get_object_or_404(Chat, id=chat.id)
-        #     message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
-        #     chat.message = message
-        chat_id = get_list_or_404(Chat)
-        messages = Message.objects.order_by('-pk')
+        messages = Chat.objects.order_by('-pk').filter(members=self.scope['user'])
+
+        for chat in messages:
+            chat_id = get_object_or_404(Chat, id=chat.id)
+            message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+            chat.message = message
+            # Получаем количество получателей в комнате
+            # Чтобы решить личный чат это или беседа
+            count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+            count = count[0].members__count
+            chat.count = count
+
+        #messages = Message.objects.order_by('-pk')
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -168,16 +177,29 @@ class AllChatsConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        return {
-            'author': message.author.username,
-            'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
-            'image': message.author.profile.image.url,
-            'slug': message.author.profile.slug,
-            'id': message.author.profile.id,
-            'room_id': message.recipient.id,
-            'content': message.content,
-            'timestamp': str(message.timestamp)[:16]
-        }
+        if message.count >= 3:
+            data_chats = {
+                'first_name': message.group_name,#.author.profile.first_name + ' ' + message.message[0].author.profile.last_name,
+                'image': message.message[0].author.profile.image.url,
+                'slug': f'/chat/{message.id}',
+                'id': message.message[0].author.profile.id,
+                'room_id': message.id,
+                'content': message.message[0].content,
+                'timestamp': str(message.message[0].timestamp)[:16]
+            }
+        else:
+            if self.scope['user'] == message.members.all()[0]:
+                data_chats = {
+                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
+                    'image': message.members.all()[1].profile.image.url,
+                    'slug': f'{message.members.all()[1].profile.slug}',
+                    'id': message.members.all()[1].profile.id,
+                    'room_id': message.id,
+                    'content': message.message[0].content,
+                    'timestamp': str(message.message[0].timestamp)[:16]
+                }
+
+        return data_chats
 
     commands = {
         'fetch_messages': fetch_messages,
