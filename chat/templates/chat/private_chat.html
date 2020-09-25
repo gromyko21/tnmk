@@ -40,7 +40,6 @@
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
 
-<script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 <script>
     var roomName = {{ room_name_json }};
@@ -50,16 +49,14 @@
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
-    var userSocket = new ReconnectingWebSocket(
-        'ws://' + window.location.host +
-        '/ws/user/1/' );
+<!--    var userSocket = new ReconnectingWebSocket(-->
+<!--        'ws://' + window.location.host +-->
+<!--        '/ws/user/1/' );-->
 
     chatSocket.onopen = function(e) {
       fetchMessages();
     }
-    userSocket.onopen = function(e) {
 
-    }
 
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
@@ -68,7 +65,7 @@
             createMessage(data['messages'][i]);
           }
         } else if (data['command'] === 'new_message'){
-          createMessage(data['message']);
+          createMessage(data['message']);console.log('НИКОЛАЙ')
         }
     };
 
