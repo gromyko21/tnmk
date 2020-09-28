@@ -154,10 +154,6 @@ class ChatConsumer(WebsocketConsumer):
 class AllChatsConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
-        # Получаем последнее сообщение
-        # body_chat = Chat.objects.filter(members=self.scope['user'])
-        #
-        # chat_id = get_list_or_404(Chat)
 
         messages = Chat.objects.order_by('-pk').filter(members=self.scope['user'])
 
@@ -171,7 +167,6 @@ class AllChatsConsumer(WebsocketConsumer):
             count = count[0].members__count
             chat.count = count
 
-        #messages = Message.objects.order_by('-pk')
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -213,26 +208,26 @@ class AllChatsConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        if message.count >= 3:
+        # if message.count >= 3:
+        #     return {
+        #         'first_name': message.group_name,#.author.profile.first_name + ' ' + message.message[0].author.profile.last_name,
+        #         # 'image': message.image_chat.url,
+        #         'slug': f'/chat/{message.id}',
+        #         'room_id': message.id,
+        #         'id': message.id,
+        #         'content': message.message[0].content,
+        #         'timestamp': str(message.message[0].timestamp)[:16]
+        #     }
+        # else:
+        if self.scope['user'] == message.members.all()[0]:
             return {
-                'first_name': message.group_name,#.author.profile.first_name + ' ' + message.message[0].author.profile.last_name,
-                # 'image': message.image_chat.url,
-                'slug': f'/chat/{message.id}',
+                'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
+                'image': message.members.all()[1].profile.image.url,
+                'slug': f'/account/{message.members.all()[1].profile.slug}',
+                'id': message.members.all()[1].profile.id,
                 'room_id': message.id,
-                'id': message.id,
                 'content': message.message[0].content,
                 'timestamp': str(message.message[0].timestamp)[:16]
-            }
-        else:
-            if self.scope['user'] == message.members.all()[0]:
-                return {
-                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[1].profile.image.url,
-                    'slug': f'/account/{message.members.all()[1].profile.slug}',
-                    'id': message.members.all()[1].profile.id,
-                    'room_id': message.id,
-                    'content': message.message[0].content,
-                    'timestamp': str(message.message[0].timestamp)[:16]
                 }
 
         # return data_chats

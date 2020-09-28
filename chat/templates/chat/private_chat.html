@@ -6,13 +6,7 @@
 {% block content %}
 
 <div class="mx-auto" style="width: 35%;">
-  {% for name in list_users %}
-    Создатель: <a href="{{ name.creater.profile.get_absolute_url }}"> {{ name.creater.profile.first_name }} {{ name.creater.profile.last_name }}</a><br>
-    Участники:<br>
-    {% for list in name.members.all %}
-    <a href="{{ list.profile.get_absolute_url }}"> {{ list.profile.first_name }} {{ list.profile.last_name }}</a><br>
-    {% endfor %}
-  {% endfor %}
+
 <div id="chat-log">
   {% comment %}
   <div class="card text-center">
@@ -49,9 +43,9 @@
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
-<!--    var userSocket = new ReconnectingWebSocket(-->
-<!--        'ws://' + window.location.host +-->
-<!--        '/ws/user/1/' );-->
+    var userSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/user/1/' );
 
     chatSocket.onopen = function(e) {
       fetchMessages();
@@ -62,10 +56,10 @@
         var data = JSON.parse(e.data);
         if (data['command'] === 'messages') {
           for (let i=0; i<data['messages'].length; i++) {
-            createMessage(data['messages'][i]);
+            createMessage(data['messages'][i]);console.log('НИКОЛАЙ')
           }
         } else if (data['command'] === 'new_message'){
-          createMessage(data['message']);console.log('НИКОЛАЙ')
+          createMessage(data['message']);console.log('Саша')
         }
     };
 
@@ -101,6 +95,9 @@
       chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
     }
 
+    let custom = '',
+        custom_time = '';
+
     function createMessage(data) {
 
       var author = data['author'],
@@ -115,8 +112,15 @@
       if (author === username) {
         owner_class = 'text-left';
       }
-      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p></h7>'+data.content+'</h7>></div></div></div>';
-      $('#chat-log').append(text);
+      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div></div>';
+
+      if((custom != data.content) && (custom_time != timestamp)) {
+        $('#chat-log').append(text);
+      }
+      custom = data.content;
+      custom_time = timestamp;
+
+
 
     }
 

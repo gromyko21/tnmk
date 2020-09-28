@@ -61,10 +61,10 @@ def chat(request):
 @login_required
 def private_chat(request, id):
 
-    list_users = Chat.objects.filter(id=id)
+    #list_users = Chat.objects.filter(id=id)
     return render(request, 'chat/private_chat.html', {
 
-                                              'list_users': list_users,
+                                              #'list_users': list_users,
                                               'room_name_json': mark_safe(json.dumps(id)),
                                               #'image_message':json.dumps(str(Message.image_message)),
                                               'username': mark_safe(json.dumps(request.user.username)),

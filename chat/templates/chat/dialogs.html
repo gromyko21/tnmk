@@ -46,7 +46,7 @@
           <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}
               &#160; &#160;{{ chat.message.0.timestamp }}</p>
         </h7>
-        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} Сообщение прочитано</p>
+        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} </p>
       </div>
         </div>
     </div>
@@ -55,7 +55,7 @@
     {% endif %}
     {% endif %}
         {% endfor %}
-    --------------------
+    ------------------------------(Ловит последние сообщения)
     <div id="chat-log">
   {% comment %}
   <div class="card text-center">
@@ -76,7 +76,6 @@
 </div>
 
 
-<script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 
 <script>
