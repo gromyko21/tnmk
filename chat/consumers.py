@@ -32,7 +32,6 @@ class ChatConsumer(WebsocketConsumer):
 
         chat = Chat.objects.get(id=room_name)
 
-
         message = Message.objects.create(
             author=author_user,
             content=data['message'],
