@@ -35,9 +35,9 @@ class Profile(models.Model):
     def __str__(self):
         return self.first_name
 
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.user.username)
-    #     return super(Profile, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.user.username)
+        return super(Profile, self).save(*args, **kwargs)
 
 #Обновление модели автоматически сохраняется
 @receiver(post_save, sender=User)

@@ -31,23 +31,23 @@ def new_chat(request):
 def chat(request):
     search_chats = request.GET.get('search_chats', '')
     if search_chats:
-        chats = Profile.objects.order_by('-pk').filter(Q(first_name__icontains=search_chats) | Q(last_name__icontains=search_chats))
+        chats = Profile.objects.order_by('-pk').filter(Q(first_name=search_chats) | Q(last_name=search_chats))
     else:
         chats = Profile.objects.order_by('-pk')
         # Получаем последнее сообщение
     body_chat = Chat.objects.order_by('-pk').filter(Q(members=request.user))
-    for chat in body_chat:
-        chat_id = get_object_or_404(Chat, id=chat.id)
-        message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
-        chat.message = message
-        # Получаем количество получателей в комнате
-        # Чтобы решить личный чат это или беседа
-        count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
-        count = count[0].members__count
-        chat.count = count
-
-
-    # Непрочитанные сообщени
+    # for chat in body_chat:
+    #     chat_id = get_object_or_404(Chat, id=chat.id)
+    #     message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+    #     chat.message = message
+    #     # Получаем количество получателей в комнате
+    #     # Чтобы решить личный чат это или беседа
+    #     count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+    #     count = count[0].members__count
+    #     chat.count = count
+    #
+    #
+    # # Непрочитанные сообщени
 
     return render(request, 'chat/dialogs.html',
                   {'chat': body_chat,

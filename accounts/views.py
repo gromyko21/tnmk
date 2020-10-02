@@ -158,18 +158,14 @@ def any_user(request, slug):
             else:
                 if new_chat_form.is_valid():
                     new_chat_form.instance.creater = request.user
-                    #new_chat_form.instance.members = any_user.user
-                    # new_chat_form.instance.group_name = any_user.user.username
                     new_chat_form.save()
-                    return redirect('chat_url')
+
+                    return redirect(f'chat_url/{new_chat_form.id}')
                 else:
                     HttpResponseNotFound("<h2>Введены неверные данные</h2>")
         else:
             if new_chat_form.is_valid():
                 new_chat_form.instance.creater = request.user
-                #new_chat_form.instance.members = any_user.user
-                # new_chat_form.instance.group_name = any_user.user.username
-                #new_chat_form.instance.slug = str(request.user) + '_to_' + str(any_user.user.username)
                 new_chat_form.save()
                 return redirect('chat_url')
             else:

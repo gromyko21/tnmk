@@ -4,7 +4,6 @@
 {% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
 
-{{ rr }}
 <div id="id_content"></div>
 <div id="chat-message-submit"></div>
 <div class="mx-auto" style="width: 35%;">
@@ -16,46 +15,7 @@
        </div>
      </div>
   </form>
-<!--    <a style="width:100%;" class="btn btn-outline-primary" href="{% url 'new_chat_url' %}">Начать новый чат</a>-->
-<!--  {% for chat in chat %}-->
-<!--    {% if chat.count >= 3 %}-->
 
-<!--    <div class="card text-center"  onClick="document.location='{{ chat.id }}'">-->
-<!--    <div class="media" >-->
-<!--      <img src="/media/{{ chat.image_chat }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">-->
-<!--      <div class="media-body">-->
-<!--        <h7 class="mt-0" >-->
-<!--            <a href="{{ chat.id }}" style="float:left;"> {{ chat.group_name }}</a></br>-->
-<!--          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}-->
-<!--              &#160; &#160;{{ chat.message.0.timestamp }} </p>-->
-<!--        </h7>-->
-<!--        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} {{ chat.message.is_readed }} </p>-->
-<!--      </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--{% else %}-->
-<!--    {% if user == chat.members.all.0 %}-->
-
-<!--    <div class="card text-center"  onClick="document.location='{{ chat.id }}'">-->
-<!--    <div class="media" >-->
-<!--      <img src="/media/{{ chat.members.all.1.profile.image  }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">-->
-<!--      <div class="media-body">-->
-<!--        <h7 class="mt-0">-->
-<!--            <a href="{{ chat.id }}" style="float:left;"> {{ chat.members.all.1 }}</a></br>-->
-<!--          <p style="font-size:10pt; color: #5f5f5f; text-align:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}-->
-<!--              &#160; &#160;{{ chat.message.0.timestamp }}</p>-->
-<!--        </h7>-->
-<!--        <p style="text-align:left;overflow: hidden;height: 50px;">{{ chat.message.0.content }} </p>-->
-<!--      </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-<!--    {% endif %}-->
-<!--    {% endif %}-->
-<!--        {% endfor %}-->
-    ------------------------------(Ловит последние сообщения)
     <div id="chat-log">
   {% comment %}
   <div class="card text-center">
