@@ -81,8 +81,6 @@ class ChatConsumer(WebsocketConsumer):
             'slug': message.author.profile.slug,
             'content': message.content,
             'room_id': message.recipient.id,
-            # 'image_message': message.image_message,
-            # 'file_message': message.file_message,
             'timestamp': str(message.timestamp)[:16]
         }
         return data_chats
@@ -96,16 +94,13 @@ class ChatConsumer(WebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
 
-        body_chat = Chat.objects.order_by('-pk').filter(id=self.room_name)
+        body_chat = Chat.objects.filter(id=self.room_name)
         body_chat = body_chat[0].members.all()
-
         for user in body_chat:
             async_to_sync(self.channel_layer.group_add)(
                 'user_%s' % user.id,
                 self.channel_name
             )
-
-
 
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -122,7 +117,6 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
-
 
     def send_chat_message(self, message):
         async_to_sync(self.channel_layer.group_send)(

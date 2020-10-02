@@ -4,7 +4,7 @@
 {% block title %}Личные cообщения{% endblock %}
 {% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
-
+{{ list_users }}
 <div class="mx-auto" style="width: 35%;">
 
 <div id="chat-log">
@@ -38,14 +38,17 @@
 <script>
     var roomName = {{ room_name_json }};
     var username = {{ username }};
+    {% for user_id in list_users %}
+       var userSocket_{{ user_id.id }} = new ReconnectingWebSocket(
+      'ws://' + window.location.host +
+      '/ws/user/{{ user_id.id }}/' );
+     {% endfor %}
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
 
-    var userSocket = new ReconnectingWebSocket(
-        'ws://' + window.location.host +
-        '/ws/user/1/' );
+
 
     chatSocket.onopen = function(e) {
       fetchMessages();
@@ -82,12 +85,15 @@
             'from': username,
             'room_name': roomName
         }))
-        userSocket.send(JSON.stringify({
+        {% for user_id in list_users %}
+          userSocket_{{ user_id.id }}.send(JSON.stringify({
             'command': 'new_message',
             'message': message,
             'from': username,
             'room_name': roomName
         }));
+        {% endfor %}
+
         messageInputDom.value = '';
     };
 
