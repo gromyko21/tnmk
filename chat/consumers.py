@@ -150,7 +150,7 @@ class AllChatsConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
 
-        messages = Chat.objects.filter(members=self.scope['user']).order_by('-pk')
+        messages = Chat.objects.order_by('received_messages__timestamp')#.filter(members=self.scope['user'])
 
         for chat in messages:
             chat_id = get_object_or_404(Chat, id=chat.id)
@@ -189,7 +189,6 @@ class AllChatsConsumer(WebsocketConsumer):
         chat.count = count
         chat.message = message1
 
-
         content = {
             'command': 'new_message',
             'message': self.message_to_json(chat)
@@ -214,29 +213,27 @@ class AllChatsConsumer(WebsocketConsumer):
         #         'timestamp': str(message.message[0].timestamp)[:16]
         #     }
         # else:
-        if self.scope['user'] == message.members.all()[0]:
-            if not message.message:
-                return {
-                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[1].profile.image.url,
-                    'slug': f'/account/{message.members.all()[1].profile.slug}',
-                    'id': message.members.all()[1].profile.id,
-                    'room_id': message.id,
-                    'content': 'Нет сообщений',
-                    'timestamp': ''
-                    }
-            else:
-                return {
-                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[1].profile.image.url,
-                    'slug': f'/account/{message.members.all()[1].profile.slug}',
-                    'id': message.members.all()[1].profile.id,
-                    'room_id': message.id,
-                    'content': message.message[0].content,
-                    'timestamp': str(message.message[0].timestamp)[:16]
-                    }
-
-        # return data_chats
+        # if self.scope['user'] == message.members.all()[0]:
+            # if not message.message:
+            #     return {
+            #         'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
+            #         'image': message.members.all()[1].profile.image.url,
+            #         'slug': f'/account/{message.members.all()[1].profile.slug}',
+            #         'id': message.members.all()[1].profile.id,
+            #         'room_id': message.id,
+            #         'content': 'Нет сообщений',
+            #         'timestamp': ''
+            #         }
+            # else:
+        return {
+            'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
+            'image': message.members.all()[1].profile.image.url,
+            'slug': f'/account/{message.members.all()[1].profile.slug}',
+            'id': message.members.all()[1].profile.id,
+            'room_id': message.id,
+            'content': message.message[0].content,
+            'timestamp': str(message.message[0].timestamp)[:16]
+            }
 
     commands = {
         'fetch_messages': fetch_messages,
