@@ -12,7 +12,7 @@ import json
 @login_required
 def new_chat(request):
     if request.method == 'POST':
-        new_chat_form = ChatForm(request.POST, request.FILES,)
+        new_chat_form = ChatForm(request.POST)
         if new_chat_form.is_valid():
             new_chat_form.instance.creater = request.user
             new_chat_form.save()

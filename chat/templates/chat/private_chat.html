@@ -1,10 +1,8 @@
-
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Личные cообщения{% endblock %}
 {% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
-{{ list_users }}
 <div class="mx-auto" style="width: 35%;">
 
 <div id="chat-log">
@@ -26,10 +24,6 @@
 
 <form method="post"   enctype="multipart/form-data">
     {% csrf_token %}
-<!--  Загрузка фото:</br>-->
-<!--    <input type="file" name="image_message" accept="image/*" id="id_image_message">-->
-<!--    Загрузка фала:</br>-->
-<!--    <input  type="file" name="file_message" id="id_file_message">-->
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
