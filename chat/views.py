@@ -22,7 +22,9 @@ def new_chat(request):
     else:
         new_chat_form = ChatForm()
     return render(request, 'chat/new_chat.html',
-                  {'new_chat': new_chat_form})
+                  {'new_chat': new_chat_form,
+                   'username': mark_safe(json.dumps(request.user.username)),
+                   })
 
 
 # Перечисление всех чатов

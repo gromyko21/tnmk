@@ -58,7 +58,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         read = '1'
-
         data_chats = {
             'author': message.author.username,
             'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
@@ -136,24 +135,24 @@ class ChatConsumer(WebsocketConsumer):
 class AllChatsConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
-
-        messages = Chat.objects.order_by('received_messages__timestamp')#.filter(members=self.scope['user'])
-
-        for chat in messages:
-            chat_id = get_object_or_404(Chat, id=chat.id)
-            message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
-            chat.message = message
-            # Получаем количество получателей в комнате
-            # Чтобы решить личный чат это или беседа
-            count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
-            count = count[0].members__count
-            chat.count = count
-
-        content = {
-            'command': 'messages',
-            'messages': self.messages_to_json(messages)
-        }
-        self.send_message(content)
+        pass
+        # # messages = Chat.objects.order_by('received_messages__timestamp')#.filter(members=self.scope['user'])
+        #
+        # for chat in messages:
+        #     chat_id = get_object_or_404(Chat, id=chat.id)
+        #     message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+        #     chat.message = message
+        #     # Получаем количество получателей в комнате
+        #     # Чтобы решить личный чат это или беседа
+        #     count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+        #     count = count[0].members__count
+        #     chat.count = count
+        #
+        # content = {
+        #     'command': 'messages',
+        #     'messages': self.messages_to_json(messages)
+        # }
+        # self.send_message(content)
 
     def new_message(self, data):
         author = data['from']
@@ -182,59 +181,40 @@ class AllChatsConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
+        # Проверка непрочитанных сообщений
         read = ''
+        # you = 'Вы:'
         if message.message[0].author:
             if self.scope['user'] != message.message[0].author:
                 if message.message[0].is_readed == False:
+                    you = message.message[0].author.profile.first_name + ': '
                     read = 1
 
+        # Проверка на загрузку фоторгафии и имени пользователя в личной беседе
         if self.scope['user'] == message.members.all()[0]:
-            try:
-                data_message = {
-                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[1].profile.image.url,
-                    'slug': message.members.all()[1].profile.slug,
-                    'id': message.members.all()[1].profile.id,
-                    'room_id': message.id,
-                    'content': message.message[0].content,
-                    'read_message': read,
-                    'timestamp': str(message.message[0].timestamp)[:16]
-                    }
-            # Если нет сообщений в чате - появляется ошибка
-            except IndexError:
-                data_message = {
-                    'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[1].profile.image.url,
-                    'slug': message.members.all()[1].profile.slug,
-                    'id': message.members.all()[1].profile.id,
-                    'room_id': message.id,
-                    'content': 'Здесь пока нет сообщений',
-                    'timestamp': ''
-                    }
-            return data_message
+            data_message = {
+                'first_name': message.members.all()[1].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
+                'image': message.members.all()[1].profile.image.url,
+                'slug': message.members.all()[1].profile.slug,
+                'id': message.members.all()[1].profile.id,
+                'room_id': message.id,
+                'content': message.message[0].content,
+                'read_message': read,
+                'timestamp': str(message.message[0].timestamp)[:16]
+                }
         else:
-            try:
-                data_message = {
-                    'first_name': message.members.all()[0].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[0].profile.image.url,
-                    'slug': message.members.all()[0].profile.slug,
-                    'id': message.members.all()[0].profile.id,
-                    'room_id': message.id,
-                    'content': message.message[0].content,
-                    'read_message': read,
-                    'timestamp': str(message.message[0].timestamp)[:16]
-                    }
-            except IndexError:
-                data_message = {
-                    'first_name': message.members.all()[0].profile.first_name + ' ' + message.members.all()[1].profile.last_name,
-                    'image': message.members.all()[0].profile.image.url,
-                    'slug': message.members.all()[0].profile.slug,
-                    'id': message.members.all()[0].profile.id,
-                    'room_id': message.id,
-                    'content': 'Здесь пока нет сообщений',
-                    'timestamp': ''
-                    }
+            data_message = {
+                'first_name': message.members.all()[0].profile.first_name + ' ' + message.members.all()[0].profile.last_name,
+                'image': message.members.all()[0].profile.image.url,
+                'slug': message.members.all()[0].profile.slug,
+                'id': message.members.all()[0].profile.id,
+                'room_id': message.id,
+                'content': message.message[0].content,
+                'read_message': read,
+                'timestamp': str(message.message[0].timestamp)[:16]
+                }
         return data_message
+
     commands = {
         'fetch_messages': fetch_messages,
         'new_message': new_message

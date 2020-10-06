@@ -5,6 +5,8 @@ from django.db.models import Q
 from .forms import *
 from django.http import HttpResponse, HttpResponseNotFound
 from django.contrib.auth.decorators import login_required
+from django.utils.safestring import mark_safe
+import json
 
 
 #Загрузка главной страницы
@@ -36,6 +38,7 @@ def home(request):
         'is_paginated': is_paginated,
         'next_url': next_url,
         'prev_url': prev_url,
+        'username': mark_safe(json.dumps(request.user.username)),
     }
     return render(request, 'home/home.html', data)
 
@@ -59,6 +62,7 @@ def articles(request, slug):
         'articles':      articles,
         'comments':     comments,
         'comment_form': comment_form,
+        'username': mark_safe(json.dumps(request.user.username)),
     }
     return render(request, 'home/one_news.html', context)
 
@@ -76,7 +80,9 @@ def edit_comment(request, id, slug):
         else:
             form = CommentForm()
             return render(request, "home/edit_comment.html",
-                          {"comment": comment_edit,})
+                          {
+                              "comment": comment_edit,
+                           'username': mark_safe(json.dumps(request.user.username)),})
     except Comment.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
 

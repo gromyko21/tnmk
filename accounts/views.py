@@ -11,7 +11,8 @@ from django.core.paginator import Paginator
 from chat.models import Chat, Message
 from chat.forms import ChatForm
 from django.db.models import Count
-
+from django.utils.safestring import mark_safe
+import json
 
 
 #Авторизация пользователей
@@ -47,7 +48,8 @@ def update_profile(request):
     else:
         profile_form = ProfileForm(instance=request.user.profile)
     return render(request, 'accounts/edit.html', {
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'username': mark_safe(json.dumps(request.user.username)),
     })
 
 
@@ -68,6 +70,7 @@ def my_page(request):
             'posts': Post.objects.all(),
             'my_posts': Post.objects.filter(author=request.user),
             'form': form,
+            'username': mark_safe(json.dumps(request.user.username)),
         }
     return render(request, 'accounts/my_page.html',context)
 
@@ -90,6 +93,7 @@ def update_post(request, id):
                           {
                               "post": post,
                               'post_form': post_form,
+                              'username': mark_safe(json.dumps(request.user.username)),
                            })
     except Post.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")
@@ -132,7 +136,8 @@ def list_users(request):
         'page_object': page,
         'is_paginated': is_paginated,
         'next_url': next_url,
-        'prev_url': prev_url
+        'prev_url': prev_url,
+        'username': mark_safe(json.dumps(request.user.username)),
     }
     return render(request, 'accounts/list_users.html',data)
 
@@ -175,6 +180,7 @@ def any_user(request, slug):
     context = {
              'user_data': any_user,
              'user_context': user_context,
-             'start_chat': new_chat_form
+             'start_chat': new_chat_form,
+             'username': mark_safe(json.dumps(request.user.username)),
                 }
     return render(request, 'accounts/profile_user.html', context)

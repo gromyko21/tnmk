@@ -1,6 +1,7 @@
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Домашняя страница{% endblock %}
+{% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
 <div class="mx-auto" style="width: 35%;">
   <form action="{% url 'home_url' %}">
@@ -48,4 +49,87 @@
       <a class="page-link" href="{{ next_url }}">Вперед</a>
   </ul>
 </nav>
+
+<div id="id_content"></div>
+<div id="chat-message-submit"></div>
+<div id="chat-log"></div>
+  <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+  <script>
+    var username = {{ user.id }};
+
+    var userSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/user/' + username + '/');
+
+    userSocket.onopen = function(e) {
+      fetchMessages();
+    }
+
+    userSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data['command'] === 'messages') {
+          for (let i=0; i<data['messages'].length; i++) {
+            createMessage(data['messages'][i]);
+
+          }
+        } else if (data['command'] === 'new_message'){
+          createMessage(data['message']);
+
+        }
+    };
+
+    userSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#id_content').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.getElementById('id_content');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+            'room_name': username
+
+        }));
+        messageInputDom.value = '';
+    };
+
+    function fetchMessages() {
+      userSocket.send(JSON.stringify({'command': 'fetch_messages' }));
+    }
+
+    function createMessage(data) {
+
+      var author = data['author'],
+          first_name = data['first_name'],
+          image = data['image'],
+          id = data['id'],
+          read_message = data['read_message'],
+          slug = data['slug'],
+          room_id = data['room_id'],
+          timestamp = data['timestamp'],
+          owner_class = 'text-right';
+      if (author === username) {
+        owner_class = 'text-left';
+      }
+        $('#chat_'+id).remove();
+      var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
+<!--      $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')-->
+      if (read_message == 1){
+      $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')
+      setTimeout(function()
+      {
+      $("#chat_"+id).remove();
+      }, 2000);
+    }
+
+   }
+  </script>
 {% endblock %}
