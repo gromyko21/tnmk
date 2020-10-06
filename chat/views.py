@@ -35,9 +35,21 @@ def chat(request):
         chats = Profile.objects.order_by('-pk').filter(Q(first_name=search_chats) | Q(last_name=search_chats))
     else:
         chats = Profile.objects.order_by('-pk')
+    # body_chat = Chat.objects.order_by('received_messages__timestamp').filter(members=request.user)
+    body_chat = Chat.objects.order_by('-pk')#.filter(Q(members=request.user))
+    for chat in body_chat:
+        chat_id = get_object_or_404(Chat, id=chat.id)
+        message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+        chat.message = message
+    #     # Получаем количество получателей в комнате
+    #     # Чтобы решить личный чат это или беседа
+    #     count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+    #     count = count[0].members__count
+    #     chat.count = count
 
     return render(request, 'chat/dialogs.html',
                   {
+                   'body_chat': body_chat,
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
                    'username': mark_safe(json.dumps(request.user.username)),
                    })

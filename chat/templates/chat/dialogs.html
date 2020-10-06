@@ -17,7 +17,23 @@
     </form>
     <a style="width:100%;" class="btn btn-outline-primary" href="{% url 'new_chat_url' %}">Начать новый чат</a>
 
-    <div id="chat-log"></div>
+  {% for chat in body_chat %}
+    <div id="chat-log">
+    <div class="card" id="chat_{{chat.id}}" onClick="document.location='{{ chat.id }}'">
+        <div {% if chat.message.0.is_readed != 1 %} class="media new-message" {% else %} class="media" {% endif %}>
+            <img src="/media/{{ chat.message.0.author.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+            <div class="media-body">
+                <h7 class="mt-0">
+                    <a href="/account/{{ chat.message.0.author.profile.slug }}" style="float:left;">{{ chat.message.0.author.profile.first_name }} {{ chat.message.0.author.profile.last_name }}</a>
+                    <p style="font-size:10pt; color: #5f5f5f; text-align:left;">&nbsp; &nbsp;{{ chat.message.0.timestamp }}</p>
+                    <h7>{{ chat.message.0.content }}</h7>
+                </h7>
+            </div>
+        </div>
+    </div>
+    </div>
+  {% endfor %}
+<!--    <div id="chat-log"></div>-->
 </div>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 <script>
@@ -87,10 +103,10 @@
       if (author === username) {
         owner_class = 'text-left';
       }
-        $('#chat_'+id).remove();
+        $('#chat_'+room_id).remove();
       var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
 
-      $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log');
+      $('<div class="card" id="chat_'+room_id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log');
 
    }
 
