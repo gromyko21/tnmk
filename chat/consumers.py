@@ -32,12 +32,9 @@ class ChatConsumer(WebsocketConsumer):
 
         chat = Chat.objects.get(id=room_name)
 
-
         message = Message.objects.create(
             author=author_user,
             content=data['message'],
-            # image_message=data['message'],
-            # file_message=data['message'],
             recipient=chat,)
 
         message1 = Message.objects.order_by('-pk').filter(recipient=chat)[0:1]
@@ -60,26 +57,16 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        # if message.count >=3:
-        #     data_chats={
-        #     'author': message.author.username,
-        #     'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
-        #     'image': message.author.profile.image.url,
-        #     'id': message.author.profile.id,
-        #     'slug': message.author.profile.slug,
-        #     'content': message.content,
-        #     # 'image_message': message.image_message,
-        #     # 'file_message': message.file_message,
-        #     'timestamp': str(message.timestamp)[:16]
-        # # }
-        # else:
-        data_chats={
+        read = '1'
+
+        data_chats = {
             'author': message.author.username,
             'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
             'image': message.author.profile.image.url,
             'id': message.author.profile.id,
             'slug': message.author.profile.slug,
             'content': message.content,
+            'read_message': read,
             'room_id': message.recipient.id,
             'timestamp': str(message.timestamp)[:16]
         }
@@ -195,6 +182,12 @@ class AllChatsConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
+        read = ''
+        if message.message[0].author:
+            if self.scope['user'] != message.message[0].author:
+                if message.message[0].is_readed == False:
+                    read = 1
+
         if self.scope['user'] == message.members.all()[0]:
             try:
                 data_message = {
@@ -204,6 +197,7 @@ class AllChatsConsumer(WebsocketConsumer):
                     'id': message.members.all()[1].profile.id,
                     'room_id': message.id,
                     'content': message.message[0].content,
+                    'read_message': read,
                     'timestamp': str(message.message[0].timestamp)[:16]
                     }
             # Если нет сообщений в чате - появляется ошибка
@@ -227,6 +221,7 @@ class AllChatsConsumer(WebsocketConsumer):
                     'id': message.members.all()[0].profile.id,
                     'room_id': message.id,
                     'content': message.message[0].content,
+                    'read_message': read,
                     'timestamp': str(message.message[0].timestamp)[:16]
                     }
             except IndexError:
@@ -239,8 +234,7 @@ class AllChatsConsumer(WebsocketConsumer):
                     'content': 'Здесь пока нет сообщений',
                     'timestamp': ''
                     }
-            return data_message
-
+        return data_message
     commands = {
         'fetch_messages': fetch_messages,
         'new_message': new_message
@@ -264,7 +258,6 @@ class AllChatsConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
-
 
     def send_chat_message(self, message):
         async_to_sync(self.channel_layer.group_send)(
