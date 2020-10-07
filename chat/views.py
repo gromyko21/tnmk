@@ -35,8 +35,8 @@ def chat(request):
         chats = Profile.objects.order_by('-pk').filter(Q(first_name=search_chats) | Q(last_name=search_chats))
     else:
         chats = Profile.objects.order_by('-pk')
-    # body_chat = Chat.objects.order_by('received_messages__timestamp').filter(members=request.user)
-    body_chat = Chat.objects.order_by('-pk')#.filter(Q(members=request.user))
+    body_chat = Chat.objects.filter(members=request.user).order_by()
+    # body_chat = body_chat.order_by('received_messages__pk')
     for chat in body_chat:
         chat_id = get_object_or_404(Chat, id=chat.id)
         message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]

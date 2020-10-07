@@ -32,16 +32,15 @@
 <script>
     var roomName = {{ room_name_json }};
     var username = {{ username }};
-    {% for user_id in list_users %}
-       var userSocket_{{ user_id.id }} = new ReconnectingWebSocket(
-      'ws://' + window.location.host +
-      '/ws/user/{{ user_id.id }}/' );
-     {% endfor %}
+<!--    {% for user_id in list_users %}-->
+<!--       var userSocket_{{ user_id.id }} = new ReconnectingWebSocket(-->
+<!--      'ws://' + window.location.host +-->
+<!--      '/ws/user/{{ user_id.id }}/' );-->
+<!--     {% endfor %}-->
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
         '/ws/chat/' + roomName + '/');
-
 
 
     chatSocket.onopen = function(e) {
@@ -79,14 +78,14 @@
             'from': username,
             'room_name': roomName
         }))
-        {% for user_id in list_users %}
-          userSocket_{{ user_id.id }}.send(JSON.stringify({
-            'command': 'new_message',
-            'message': message,
-            'from': username,
-            'room_name': roomName
-        }));
-        {% endfor %}
+<!--        {% for user_id in list_users %}-->
+<!--          userSocket_{{ user_id.id }}.send(JSON.stringify({-->
+<!--            'command': 'new_message',-->
+<!--            'message': message,-->
+<!--            'from': username,-->
+<!--            'room_name': roomName-->
+<!--        }));-->
+<!--        {% endfor %}-->
 
         messageInputDom.value = '';
     };
@@ -115,9 +114,6 @@
         $('#chat-log').append(text);
       }
       custom = data.content;
-
-
-
     }
 
 </script>
