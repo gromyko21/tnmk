@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 import json
+from django.db.models import Count
 
 
 @login_required
@@ -43,13 +44,19 @@ def chat(request):
         chat.message = message
     #     # Получаем количество получателей в комнате
     #     # Чтобы решить личный чат это или беседа
-    #     count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
-    #     count = count[0].members__count
-    #     chat.count = count
+        count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
+        count = count[0].members__count
+        chat.count = count
+        if count == 2:
+            if request.user == body_chat:
+                # a = count.received_messages.members[0].profile.first_name
+                a = body_chat
+                return a
 
     return render(request, 'chat/dialogs.html',
                   {
                    'body_chat': body_chat,
+                   # 'members': body_chat.members.all[1],
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
                    'username': mark_safe(json.dumps(request.user.username)),
                    })

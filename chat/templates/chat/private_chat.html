@@ -3,6 +3,10 @@
 {% block title %}Личные cообщения{% endblock %}
 {% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
 {% block content %}
+
+{% if request.user not in list_users %}
+  Боюсь у вас нет такого доступа
+{% else %}
 <div class="mx-auto" style="width: 35%;">
 
 <div id="chat-log">
@@ -22,7 +26,7 @@
   {% endcomment %}
 </div>
 
-<form method="post"   enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
@@ -94,7 +98,7 @@
       chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
     }
 
-    let custom = '';
+<!--    let custom = '';-->
 
     function createMessage(data) {
 
@@ -110,11 +114,12 @@
       }
       var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div></div>';
       
-      if(custom != data.content) {
+<!--      if(custom != data.content) {-->
         $('#chat-log').append(text);
-      }
-      custom = data.content;
+<!--      }-->
+<!--      custom = data.content;-->
     }
 
 </script>
+  {% endif %}
 {% endblock %}

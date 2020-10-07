@@ -50,9 +50,10 @@
   </ul>
 </nav>
 
+
 <div id="id_content"></div>
 <div id="chat-message-submit"></div>
-<div id="chat-log"></div>
+<div id="chat-log" style="position:fixed;right: 2%;bottom: 1%;width: 15%;"></div>
   <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
   <script>
     var username = {{ user.id }};
@@ -128,8 +129,14 @@
       {
       $("#chat_"+id).remove();
       }, 10000);
-    }
 
+<!--      setTimeout(function ()-->
+<!--      {-->
+<!--      document.title = 'Есть новые уведомления';-->
+<!--      }, 2000);-->
+
+<!--    }-->
+}
    }
   </script>
 {% endblock %}
