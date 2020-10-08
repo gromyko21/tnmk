@@ -1,7 +1,7 @@
 {% extends 'home/base.html' %}
 {% load static %}
 {% block title %}Личные cообщения{% endblock %}
-{% block link %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> {% endblock %}
+{% block link %} {% endblock %}
 {% block content %}
 
 {% if request.user not in list_users %}
@@ -29,18 +29,50 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
+<!--    <input type="file" name="image_message" accept="image/*" id="id_image_message">-->
+<!--    <input type="image" name='image_message' id="id_image_message" >-->
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
 
+<input id="upload" type="file" onchange="selectFile()">
+<!--<form method="post" enctype="multipart/form-data">-->
+<!--    {% csrf_token %}-->
+<!--        {{ message_form.as_p }}-->
+<!--    <button   type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>-->
+<!--</form>-->
+
+
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+    <script>
+
+function selectFile() {
+	e = document.getElementById('upload')
+  if(e.files[0]) {
+    let item = e.files[0];
+    let filesize = item.size;
+    let filesizeMB = (filesize / (1024 * 1024)).toFixed(2);
+    if (filesizeMB >= 3) {
+      alert('Максимальный размер фотографии 3 мб');
+    } else {
+      let form = new FormData();
+      form.append('image_message', item);
+      form.append('room_id', {{ room_name_json }});
+      form.append('user_id', {{ username }});
+        $.ajax({
+            url: '/chat/upload/',
+            type: "POST",
+            data: form
+        });
+    }
+  } else {
+    alert('Файл не найден');
+  }
+}
+</script>
 <script>
+console.log($.ajax);
     var roomName = {{ room_name_json }};
     var username = {{ username }};
-<!--    {% for user_id in list_users %}-->
-<!--       var userSocket_{{ user_id.id }} = new ReconnectingWebSocket(-->
-<!--      'ws://' + window.location.host +-->
-<!--      '/ws/user/{{ user_id.id }}/' );-->
-<!--     {% endfor %}-->
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
@@ -51,15 +83,14 @@
       fetchMessages();
     }
 
-
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         if (data['command'] === 'messages') {
           for (let i=0; i<data['messages'].length; i++) {
-            createMessage(data['messages'][i]);console.log('НИКОЛАЙ')
+            createMessage(data['messages'][i]);
           }
         } else if (data['command'] === 'new_message'){
-          createMessage(data['message']);console.log('Саша')
+          createMessage(data['message']);
         }
     };
 
@@ -80,16 +111,9 @@
             'command': 'new_message',
             'message': message,
             'from': username,
-            'room_name': roomName
+            'room_name': roomName,
+            'image_message': {{ image_message }}
         }))
-<!--        {% for user_id in list_users %}-->
-<!--          userSocket_{{ user_id.id }}.send(JSON.stringify({-->
-<!--            'command': 'new_message',-->
-<!--            'message': message,-->
-<!--            'from': username,-->
-<!--            'room_name': roomName-->
-<!--        }));-->
-<!--        {% endfor %}-->
 
         messageInputDom.value = '';
     };
@@ -97,8 +121,6 @@
     function fetchMessages() {
       chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
     }
-
-<!--    let custom = '';-->
 
     function createMessage(data) {
 
@@ -113,13 +135,11 @@
         owner_class = 'text-left';
       }
       var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div></div>';
-      
-<!--      if(custom != data.content) {-->
-        $('#chat-log').append(text);
-<!--      }-->
-<!--      custom = data.content;-->
-    }
 
+        $('#chat-log').append(text);
+
+    }
 </script>
+
   {% endif %}
 {% endblock %}

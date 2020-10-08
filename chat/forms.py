@@ -10,7 +10,8 @@ class MessageForm(forms.ModelForm):
 
     class Meta:
         model = Message
-        fields = ('message',)#, 'image_message', 'file_message')
+        exclude = ['author', 'recipient', 'timestamp', 'is_readed']
+        #fields = ('message',)#, 'image_message', 'file_message')
 
 
 class ChatForm(forms.ModelForm):

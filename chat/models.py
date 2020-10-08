@@ -26,9 +26,14 @@ class Message(models.Model):
     recipient = models.ForeignKey(Chat, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
     content = models.TextField("Сообщение", default='Нет сообщения')
     image_message = models.ImageField(null=True, blank=True, upload_to="message_image", verbose_name='Изображения в сообщениях')
-    file_message = models.ImageField(null=True, blank=True, upload_to="message_file")
-    timestamp = models.DateTimeField('Дата сообщения', auto_now=True)
-    # is_readed = models.ForeignKey(ReadMessage, verbose_name="Прочитано", on_delete=models.CASCADE)
+    image_message2 = models.ImageField(null=True, blank=True, upload_to="message_image", verbose_name='Изображения в сообщениях')
+    image_message3 = models.ImageField(null=True, blank=True, upload_to="message_image", verbose_name='Изображения в сообщениях')
+    image_message4 = models.ImageField(null=True, blank=True, upload_to="message_image", verbose_name='Изображения в сообщениях')
+    image_message5 = models.ImageField(null=True, blank=True, upload_to="message_image", verbose_name='Изображения в сообщениях')
+    file_message = models.FileField(null=True, blank=True, upload_to="message_file")
+    file_message2 = models.FileField(null=True, blank=True, upload_to="message_file")
+    file_message3 = models.FileField(null=True, blank=True, upload_to="message_file")
+    timestamp = models.DateTimeField('Дата сообщения', auto_now_add=True)
     is_readed = models.BooleanField('Прочитано', default=False)
 
     class Meta:

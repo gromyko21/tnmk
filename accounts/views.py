@@ -72,7 +72,7 @@ def my_page(request):
             'form': form,
             'username': mark_safe(json.dumps(request.user.username)),
         }
-    return render(request, 'accounts/my_page.html',context)
+    return render(request, 'accounts/my_page.html', context)
 
 
 #Обновить данные поста

@@ -5,6 +5,7 @@ import json
 from .models import Message, Chat
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models import Count
+from django.utils.safestring import mark_safe
 
 
 User = get_user_model()
@@ -26,6 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
+        print(data)
         author = data['from']
         room_name = data['room_name']
         author_user = User.objects.filter(username=author)[0]
@@ -35,7 +37,9 @@ class ChatConsumer(WebsocketConsumer):
         message = Message.objects.create(
             author=author_user,
             content=data['message'],
-            recipient=chat,)
+            # image_message=data['image_message'],
+            recipient=chat
+            )
 
         message1 = Message.objects.order_by('-pk').filter(recipient=chat)[0:1]
 
@@ -65,9 +69,10 @@ class ChatConsumer(WebsocketConsumer):
             'id': message.author.profile.id,
             'slug': message.author.profile.slug,
             'content': message.content,
+            'image_message': mark_safe(json.dumps(str(message.image_message))),
             'read_message': read,
             'room_id': message.recipient.id,
-            'timestamp': str(message.timestamp)[:16]
+            'timestamp': str(message.timestamp)[:16],
         }
         return data_chats
 
@@ -102,6 +107,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        print(data)
         self.commands[data['command']](self, data)
 
     def send_chat_message(self, message):

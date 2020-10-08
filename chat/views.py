@@ -33,11 +33,12 @@ def new_chat(request):
 def chat(request):
     search_chats = request.GET.get('search_chats', '')
     if search_chats:
-        chats = Profile.objects.order_by('-pk').filter(Q(first_name=search_chats) | Q(last_name=search_chats))
+        body_chat = Chat.objects.order_by('-pk').filter\
+            (members=request.user).filter(Q(members__profile__first_name__icontains=search_chats) | Q(members__profile__last_name__icontains=search_chats))
     else:
-        chats = Profile.objects.order_by('-pk')
-    body_chat = Chat.objects.filter(members=request.user).order_by()
-    # body_chat = body_chat.order_by('received_messages__pk')
+        body_chat = Chat.objects.filter(members=request.user).order_by('-pk')
+    # body_chat = body_chat.order_by('-received_messages')
+
     for chat in body_chat:
         chat_id = get_object_or_404(Chat, id=chat.id)
         message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
@@ -74,9 +75,36 @@ def private_chat(request, id):
             message.is_readed = True
             message.save()
 
+    if request.method == 'POST':
+        message_form = MessageForm(request.POST, request.FILES)
+        if message_form.is_valid():
+            message_form.instance.author = request.user
+            message_form.instance.recipient = list_users
+            message_form.save()
+        else:
+            pass
+    else:
+        message_form = MessageForm()
+
     return render(request, 'chat/private_chat.html', {
+                                              'message_form': message_form,
                                               'list_users': list_users.members.all,
                                               'room_name_json': mark_safe(json.dumps(id)),
+                                              'image_message': mark_safe(json.dumps(str(Message.image_message))),
                                               'username': mark_safe(json.dumps(request.user.username)),
+                                              # 'image_message': json.dumps(str(Message.image_message)) # py3
                                               })
 
+def upload_private_chat(request):
+    if request.method == 'POST':
+        message_form = MessageForm(request.POST, request.FILES)
+        if message_form.is_valid():
+            message_form.instance.author = request.user_id
+            message_form.instance.recipient = request.room_id
+            message_form.save()
+        else:
+            pass
+    else:
+        message_form = MessageForm()
+    return render(request, 'chat/private_chat.html', {
+                                              'message_form': message_form})
