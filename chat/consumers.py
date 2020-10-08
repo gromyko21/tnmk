@@ -38,6 +38,7 @@ class ChatConsumer(WebsocketConsumer):
             author=author_user,
             content=data['message'],
             # image_message=data['image_message'],
+
             recipient=chat
             )
 

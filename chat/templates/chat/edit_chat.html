@@ -1,0 +1,20 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %}Редактирование {{ chat.chat.id }}{% endblock %}
+{% block content %}
+<div class="mx-auto" style="width: 45%;">
+    <form method="POST"  enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Изменения</label><br>
+        <textarea class="form-control" name="group_name" cols="40" rows="3" maxlength="1000" required id="id_text" >{{chat.group_name}}</textarea>
+        {{ chat_form.image_chat }}
+        {{ chat_form.members }}
+        <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Изменить</button>
+    </form>
+</div>
+
+<div id="id_content"></div>
+<div id="chat-message-submit"></div>
+<div id="chat-log"></div>
+  <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+{% endblock %}

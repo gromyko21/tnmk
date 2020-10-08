@@ -115,6 +115,7 @@
           read_message = data['read_message'],
           slug = data['slug'],
           room_id = data['room_id'],
+<!--          room_id = '/chat/' + room_id-->
           timestamp = data['timestamp'],
           owner_class = 'text-right';
       if (author === username) {
@@ -128,14 +129,9 @@
       setTimeout(function()
       {
       $("#chat_"+id).remove();
-      }, 10000);
+      }, 10066600);
 
-<!--      setTimeout(function ()-->
-<!--      {-->
-<!--      document.title = 'Есть новые уведомления';-->
-<!--      }, 2000);-->
 
-<!--    }-->
 }
    }
   </script>

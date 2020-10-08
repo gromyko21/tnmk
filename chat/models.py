@@ -18,7 +18,7 @@ class Chat(models.Model):
 
 # class ReadMessage(models.Model):
 #     read = models.BooleanField('Прочитано', default=False)
-#     recipient = models.ForeignKey(Chat, verbose_name="Получатель", on_delete=models.CASCADE)
+#     recipient = models.ForeignKey(Chat, related_name='received_chat', verbose_name="Получатель", on_delete=models.CASCADE)
 
 
 class Message(models.Model):
@@ -35,6 +35,7 @@ class Message(models.Model):
     file_message3 = models.FileField(null=True, blank=True, upload_to="message_file")
     timestamp = models.DateTimeField('Дата сообщения', auto_now_add=True)
     is_readed = models.BooleanField('Прочитано', default=False)
+    # read_chat = models.ForeignKey(ReadMessage, related_name='readInChat', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = u'Сообщение'

@@ -13,7 +13,7 @@ from django.db.models import Count
 @login_required
 def new_chat(request):
     if request.method == 'POST':
-        new_chat_form = ChatForm(request.POST)
+        new_chat_form = ChatForm(request.POST, request.FILES)
         if new_chat_form.is_valid():
             new_chat_form.instance.creater = request.user
             new_chat_form.save()
@@ -26,6 +26,28 @@ def new_chat(request):
                   {'new_chat': new_chat_form,
                    'username': mark_safe(json.dumps(request.user.username)),
                    })
+
+
+#Обновить данные чата
+@login_required
+def update_chat(request, id):
+    chat = Chat.objects.get(pk=id)
+    if request.method == "POST":
+        chat_form = ChatForm(request.POST, request.FILES, instance=chat)
+        chat.group_name = request.POST.get("group_name")
+        chat.image_chat = request.POST.get('image_chat')
+        # chat.members = chat.members.set(members)
+        chat.author = request.user
+        chat_form.save()
+        chat.save()
+        return redirect("chat_url")
+    else:
+        chat_form = ChatForm(instance=chat)
+        return render(request, "chat/edit_chat.html",
+                      {
+                          "chat": chat,
+                          'chat_form': chat_form,
+                       })
 
 
 # Перечисление всех чатов
@@ -48,7 +70,7 @@ def chat(request):
         count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
         count = count[0].members__count
         chat.count = count
-        if count == 2:
+        if count >= 2:
             if request.user == body_chat:
                 # a = count.received_messages.members[0].profile.first_name
                 a = body_chat
@@ -95,6 +117,8 @@ def private_chat(request, id):
                                               # 'image_message': json.dumps(str(Message.image_message)) # py3
                                               })
 
+
+# Загрузка фотографий в личных сообщениях
 def upload_private_chat(request):
     if request.method == 'POST':
         message_form = MessageForm(request.POST, request.FILES)

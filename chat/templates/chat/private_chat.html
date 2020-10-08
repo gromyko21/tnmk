@@ -58,7 +58,8 @@ function selectFile() {
       form.append('image_message', item);
       form.append('room_id', {{ room_name_json }});
       form.append('user_id', {{ username }});
-        $.ajax({
+      console.log(jQuery.ajax);
+    jQuery.ajax({
             url: '/chat/upload/',
             type: "POST",
             data: form
