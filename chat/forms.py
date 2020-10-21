@@ -10,7 +10,8 @@ class MessageForm(forms.ModelForm):
 
     class Meta:
         model = Message
-        exclude = ['author', 'recipient', 'timestamp', 'is_readed']
+        fields = '__all__'
+        # exclude = ['author', 'recipient', 'timestamp', 'is_readed']
         #fields = ('message',)#, 'image_message', 'file_message')
 
 

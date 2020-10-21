@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 import json
 from django.db.models import Count
+from itertools import groupby
 
 
 @login_required
@@ -58,12 +59,14 @@ def chat(request):
         body_chat = Chat.objects.order_by('-pk').filter\
             (members=request.user).filter(Q(members__profile__first_name__icontains=search_chats) | Q(members__profile__last_name__icontains=search_chats))
     else:
-        body_chat = Chat.objects.filter(members=request.user).order_by('-pk')
-    # body_chat = body_chat.order_by('-received_messages')
+        body_chat = Chat.objects.filter(members=request.user).order_by('-received_messages__timestamp')
 
-    for chat in body_chat:
+    new_list = []
+    [new_list.append(item) for item in body_chat if item not in new_list]
+
+    for chat in new_list:
         chat_id = get_object_or_404(Chat, id=chat.id)
-        message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
+        message = Message.objects.filter(recipient=chat_id).last()
         chat.message = message
     #     # Получаем количество получателей в комнате
     #     # Чтобы решить личный чат это или беседа
@@ -78,11 +81,27 @@ def chat(request):
 
     return render(request, 'chat/dialogs.html',
                   {
-                   'body_chat': body_chat,
+                   'body_chat': new_list,
                    # 'members': body_chat.members.all[1],
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
                    'username': mark_safe(json.dumps(request.user.username)),
                    })
+
+
+# Загрузка фотографий в личных сообщениях
+def upload_private_chat(request):
+    if request.method == 'POST':
+        message_form = MessageForm(request.POST, request.FILES)
+        if message_form.is_valid():
+            # message_form.instance.author = request.user_id
+            # message_form.instance.recipient = request.room_id
+            message_form.save()
+        else:
+            pass
+    else:
+        message_form = MessageForm()
+    return render(request, 'chat/upload.html', {'message_form': message_form})
+
 
 
 # Страница личного чата
@@ -116,19 +135,3 @@ def private_chat(request, id):
                                               'username': mark_safe(json.dumps(request.user.username)),
                                               # 'image_message': json.dumps(str(Message.image_message)) # py3
                                               })
-
-
-# Загрузка фотографий в личных сообщениях
-def upload_private_chat(request):
-    if request.method == 'POST':
-        message_form = MessageForm(request.POST, request.FILES)
-        if message_form.is_valid():
-            message_form.instance.author = request.user_id
-            message_form.instance.recipient = request.room_id
-            message_form.save()
-        else:
-            pass
-    else:
-        message_form = MessageForm()
-    return render(request, 'chat/private_chat.html', {
-                                              'message_form': message_form})

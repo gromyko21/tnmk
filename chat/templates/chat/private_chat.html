@@ -38,40 +38,48 @@
 <!--<form method="post" enctype="multipart/form-data">-->
 <!--    {% csrf_token %}-->
 <!--        {{ message_form.as_p }}-->
-<!--    <button   type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>-->
 <!--</form>-->
 
 
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
     <script>
-
 function selectFile() {
 	e = document.getElementById('upload')
   if(e.files[0]) {
     let item = e.files[0];
+
     let filesize = item.size;
     let filesizeMB = (filesize / (1024 * 1024)).toFixed(2);
     if (filesizeMB >= 3) {
       alert('Максимальный размер фотографии 3 мб');
     } else {
-      let form = new FormData();
-      form.append('image_message', item);
-      form.append('room_id', {{ room_name_json }});
-      form.append('user_id', {{ username }});
-      console.log(jQuery.ajax);
-    jQuery.ajax({
-            url: '/chat/upload/',
-            type: "POST",
-            data: form
-        });
+
+var $input = $("#uploadimage");
+    var fd = new FormData;
+
+    fd.append('image_message', item);
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    $.ajax({
+        url: '/chat/upload/',
+        type: 'POST',
+        data: fd,
+        processData: false,
+        contentType: false,
+
+<!--        csrfmiddlewaretoken: '{{ csrf_token }}',-->
+        success: function (data) {
+            console.log(data);
+        }
+    });
     }
   } else {
     alert('Файл не найден');
   }
 }
+
 </script>
 <script>
-console.log($.ajax);
     var roomName = {{ room_name_json }};
     var username = {{ username }};
 
