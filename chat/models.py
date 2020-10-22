@@ -16,9 +16,11 @@ class Chat(models.Model):
         return reverse('private_chat_url', kwargs={'id': self.id})
 
 
-# class ReadMessage(models.Model):
-#     read = models.BooleanField('Прочитано', default=False)
-#     recipient = models.ForeignKey(Chat, related_name='received_chat', verbose_name="Получатель", on_delete=models.CASCADE)
+class ReadMessage(models.Model):
+    room_id = models.TextField('Id комнаты', max_length=30)
+    message_id = models.TextField('Id сообщения', max_length=30)
+    recipient = models.TextField('id получателей', max_length=30)
+    is_read = models.BooleanField('Прочитано', default=False)
 
 
 class Message(models.Model):

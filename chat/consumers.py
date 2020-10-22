@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
-from .models import Message, Chat
+from .models import *
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models import Count
 from django.utils.safestring import mark_safe
@@ -27,7 +27,6 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
-        print(data)
         author = data['from']
         room_name = data['room_name']
         author_user = User.objects.filter(username=author)[0]
@@ -41,6 +40,11 @@ class ChatConsumer(WebsocketConsumer):
 
             recipient=chat
             )
+        users = chat.members.all()
+        for user in users:
+            new_data = ReadMessage.objects.create(room_id=room_name, recipient=user.id, message_id=message.id)
+            new_data.save()
+        # print(new_data)
 
         message1 = Message.objects.order_by('-pk').filter(recipient=chat)[0:1]
 
@@ -108,7 +112,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
         self.commands[data['command']](self, data)
 
     def send_chat_message(self, message):

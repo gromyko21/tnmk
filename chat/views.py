@@ -66,7 +66,26 @@ def chat(request):
 
     for chat in new_list:
         chat_id = get_object_or_404(Chat, id=chat.id)
+        # print(chat_id)
+        # read_message = ReadMessage.objects.filter(room_id=chat_id.id)
+        # chat.read_message = read_message.last()
+        # list_read = []
+        # for read in read_message:
+        #     list_read.append(read)
+        # print(read.is read)
+        # print(read_message)
         message = Message.objects.filter(recipient=chat_id).last()
+        read_message = ReadMessage.objects.get(message_id=message.id, recipient=request.user.id)
+        chat.read_message = read_message
+        print(chat.read_message)
+        # for item in chat.read_message:
+        #     a = item.recipient
+        #     rr = request.user.id
+        #     print (a, rr)
+            # if int(a) == int(rr):
+            #     print('sdfsdf')
+            # print(item.recipient)
+            # print(item.is_read)
         chat.message = message
     #     # Получаем количество получателей в комнате
     #     # Чтобы решить личный чат это или беседа
@@ -81,6 +100,7 @@ def chat(request):
 
     return render(request, 'chat/dialogs.html',
                   {
+                  'read_message': read_message,
                    'body_chat': new_list,
                    # 'members': body_chat.members.all[1],
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
@@ -109,23 +129,37 @@ def upload_private_chat(request):
 def private_chat(request, id):
 
     list_users = Chat.objects.get(id=id)
+
     # Нерпочитанные сообщения
     messages = Message.objects.filter(recipient=list_users)
     for message in messages:
+        read_message = ReadMessage.objects.filter(message_id=message.id, recipient= request.user.id)
+        for item in read_message:
+            item.is_read = True
+            item.save()
+            print(item)
         if request.user != message.author:
             message.is_readed = True
             message.save()
+
+
 
     if request.method == 'POST':
         message_form = MessageForm(request.POST, request.FILES)
         if message_form.is_valid():
             message_form.instance.author = request.user
             message_form.instance.recipient = list_users
+
             message_form.save()
+
         else:
             pass
+
     else:
         message_form = MessageForm()
+
+
+    # new_data.save()
 
     return render(request, 'chat/private_chat.html', {
                                               'message_form': message_form,

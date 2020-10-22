@@ -18,11 +18,12 @@
     <a style="width:100%;" class="btn btn-outline-primary" href="{% url 'new_chat_url' %}">Начать новый чат</a>
 
   {% for chat in body_chat %}
+
     {% if chat.count == 2 %}
         {% if request.user == chat.members.all.0 %}
             <div id="chat-log" style="height=200px">
             <div class="card" id="chat_{{chat.id}}" onClick="document.location='{{ chat.id }}'">
-                <div {% if chat.message.author == request.user %} class="media" {% elif not chat.message %} class="media" {% elif chat.message.is_readed != 1 %} class="media new-message" {% else %} class="media" {% endif %}>
+                <div class="media" {% if chat.message.author != request.user and chat.read_message.is_read == False  %}  id="new_message" {% else %} class="media" {% endif %}>
                     <img src="/media/{{ chat.members.all.1.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
                     <div class="media-body">
                         <h7 class="mt-0">
@@ -41,7 +42,7 @@
         {% elif request.user == chat.members.all.1 %}
             <div id="chat-log" style="height=200px">
             <div class="card" id="chat_{{chat.id}}" onClick="document.location='{{ chat.id }}'">
-                <div  {% if chat.message.author == request.user %} class="media" {% elif not chat.message %} class="media" {% elif chat.message.is_readed != 1 %} class="media new-message" {% else %} class="media" {% endif %}>
+                <div class="media" {% if chat.message.author != request.user and chat.read_message.is_read == False  %}  id="new_message" {% else %} class="media" {% endif %}>
                     <img src="/media/{{ chat.members.all.0.profile.image }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
                     <div class="media-body">
                         <h7 class="mt-0">
@@ -62,7 +63,7 @@
     {% else %}
         <div id="chat-log" style="height=200px">
         <div class="card" id="chat_{{chat.id}}" onClick="document.location='{{ chat.id }}'">
-            <div  {% if chat.message.author == request.user %} class="media" {% elif not chat.message %} class="media" {% elif chat.message.is_readed != 1 %} class="media new-message" {% else %} class="media" {% endif %}>
+            <div class="media" {% if chat.message.author != request.user and chat.read_message.is_read == False  %}  id="new_message" {% else %} class="media" {% endif %}>
                 <img src="/media/{{ chat.image_chat }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
                 <div class="media-body">
                     <h7 class="mt-0">
@@ -157,7 +158,7 @@
         owner_class = 'text-left';
       }
         $('#chat_'+room_id).remove();
-      var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
+      var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
 
       $('<div class="card" id="chat_'+room_id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log');
 

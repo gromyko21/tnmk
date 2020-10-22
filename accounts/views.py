@@ -158,14 +158,14 @@ def any_user(request, slug):
                 # Если хоть один личный чат существует - не создаем комнату
                 if i.members.count() == 2:
                     count = 2
-            if count == 2:
-                return redirect('chat_url')
+                    if count == 2:
+                        return redirect('chat_url')
             else:
                 if new_chat_form.is_valid():
                     new_chat_form.instance.creater = request.user
                     new_chat_form.save()
 
-                    return redirect(f'chat_url/{new_chat_form.id}')
+                    return redirect('chat_url')
                 else:
                     HttpResponseNotFound("<h2>Введены неверные данные</h2>")
         else:
