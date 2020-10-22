@@ -66,26 +66,11 @@ def chat(request):
 
     for chat in new_list:
         chat_id = get_object_or_404(Chat, id=chat.id)
-        # print(chat_id)
-        # read_message = ReadMessage.objects.filter(room_id=chat_id.id)
-        # chat.read_message = read_message.last()
-        # list_read = []
-        # for read in read_message:
-        #     list_read.append(read)
-        # print(read.is read)
-        # print(read_message)
+
         message = Message.objects.filter(recipient=chat_id).last()
         read_message = ReadMessage.objects.get(message_id=message.id, recipient=request.user.id)
         chat.read_message = read_message
-        print(chat.read_message)
-        # for item in chat.read_message:
-        #     a = item.recipient
-        #     rr = request.user.id
-        #     print (a, rr)
-            # if int(a) == int(rr):
-            #     print('sdfsdf')
-            # print(item.recipient)
-            # print(item.is_read)
+
         chat.message = message
     #     # Получаем количество получателей в комнате
     #     # Чтобы решить личный чат это или беседа
@@ -94,7 +79,6 @@ def chat(request):
         chat.count = count
         if count >= 2:
             if request.user == body_chat:
-                # a = count.received_messages.members[0].profile.first_name
                 a = body_chat
                 return a
 
