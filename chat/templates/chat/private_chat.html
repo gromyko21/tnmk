@@ -40,8 +40,7 @@
 <!--        {{ message_form.as_p }}-->
 <!--</form>-->
 
-{% block script %}
-  {% endblock script %}
+{% block script %}{% endblock script %}
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
     <script>
 function selectFile() {
@@ -58,9 +57,10 @@ function selectFile() {
 var $input = $("#uploadimage");
     var fd = new FormData;
 
-    fd.append('image_message', item);
-    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fd.append('image_message', item);
+    console.log(fd)
     $.ajax({
         url: '/chat/upload/',
         type: 'POST',

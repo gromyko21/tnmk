@@ -15,7 +15,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
         chat_id = get_object_or_404(Chat, id=self.room_name)
-        messages = Message.objects.order_by('pk').filter(recipient=chat_id)
+        messages = Message.objects.order_by('pk').filter(recipient=chat_id)[:4]
         count = Chat.objects.filter(id=self.room_name).annotate(Count('members'))
         count = count[0].members__count
         messages.count = count
@@ -67,18 +67,34 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         read = '1'
-        data_chats = {
-            'author': message.author.username,
-            'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
-            'image': message.author.profile.image.url,
-            'id': message.author.profile.id,
-            'slug': message.author.profile.slug,
-            'content': message.content,
-            'image_message': mark_safe(json.dumps(str(message.image_message))),
-            'read_message': read,
-            'room_id': message.recipient.id,
-            'timestamp': str(message.timestamp)[:16],
-        }
+        count_members = len(message.recipient.members.all())
+        if count_members == 2:
+            data_chats = {
+                'author': message.author.username,
+                'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
+                'image': message.author.profile.image.url,
+                'id': message.author.profile.id,
+                'slug': message.author.profile.slug,
+                'content': message.content,
+                'image_message': mark_safe(json.dumps(str(message.image_message))),
+                'read_message': read,
+                'room_id': message.recipient.id,
+                'timestamp': str(message.timestamp)[:16],
+            }
+
+        else:
+            data_chats = {
+                'author': message.author.username,
+                'first_name': message.recipient.group_name,
+                'image': message.recipient.image_chat.url,
+                'id': message.author.profile.id,
+                'slug': message.author.profile.slug,
+                'content': message.content,
+                'image_message': mark_safe(json.dumps(str(message.image_message))),
+                'read_message': read,
+                'room_id': message.recipient.id,
+                'timestamp': str(message.timestamp)[:16],
+            }
         return data_chats
 
     commands = {
@@ -199,6 +215,7 @@ class AllChatsConsumer(WebsocketConsumer):
                 if message.message[0].is_readed == False:
                     you = message.message[0].author.profile.first_name + ': '
                     read = 1
+
 
         # Проверка на загрузку фоторгафии и имени пользователя в личной беседе
         if self.scope['user'] == message.members.all()[0]:

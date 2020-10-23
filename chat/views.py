@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect, reverse, get_list_or_404, get_obj
 from .models import *
 from accounts.models import Profile
 from .forms import MessageForm, ChatForm
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.safestring import mark_safe
 import json
 from django.db.models import Count
 from itertools import groupby
+import os
 
 
 @login_required
@@ -68,8 +69,11 @@ def chat(request):
         chat_id = get_object_or_404(Chat, id=chat.id)
 
         message = Message.objects.filter(recipient=chat_id).last()
-        read_message = ReadMessage.objects.get(message_id=message.id, recipient=request.user.id)
-        chat.read_message = read_message
+        try:
+            read_message = ReadMessage.objects.get(message_id=message.id, recipient=request.user.id)
+            chat.read_message = read_message
+        except AttributeError:
+            pass
 
         chat.message = message
     #     # Получаем количество получателей в комнате
@@ -81,30 +85,36 @@ def chat(request):
             if request.user == body_chat:
                 a = body_chat
                 return a
-
-    return render(request, 'chat/dialogs.html',
-                  {
-                  'read_message': read_message,
+    try:
+        context = {
+                       'read_message': read_message,
+                       'body_chat': new_list,
+                       # 'members': body_chat.members.all[1],
+                       'room_name_json': mark_safe(json.dumps(request.user.id)),
+                       'username': mark_safe(json.dumps(request.user.username)),
+                       }
+    except UnboundLocalError:
+        context = {
                    'body_chat': new_list,
                    # 'members': body_chat.members.all[1],
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
                    'username': mark_safe(json.dumps(request.user.username)),
-                   })
+                   }
+    return render(request, 'chat/dialogs.html', context)
 
 
 # Загрузка фотографий в личных сообщениях
 def upload_private_chat(request):
+    a = request.POST.get('image_message')
+    a2 = request.POST.get('csrfmiddlewaretoken')
+    print(a, a2)
     if request.method == 'POST':
-        message_form = MessageForm(request.POST, request.FILES)
-        if message_form.is_valid():
-            # message_form.instance.author = request.user_id
-            # message_form.instance.recipient = request.room_id
-            message_form.save()
-        else:
-            pass
-    else:
-        message_form = MessageForm()
-    return render(request, 'chat/upload.html', {'message_form': message_form})
+        with open('jghghj.png', 'w') as file:
+            os.chdir(r'/media') # X1
+            file.write(request.POST.get('image_message'))
+        # a = request.POST.get('image_message')
+        # print(a)
+    return HttpResponse("ok")
 
 
 
@@ -121,12 +131,9 @@ def private_chat(request, id):
         for item in read_message:
             item.is_read = True
             item.save()
-            print(item)
         if request.user != message.author:
             message.is_readed = True
             message.save()
-
-
 
     if request.method == 'POST':
         message_form = MessageForm(request.POST, request.FILES)
@@ -148,6 +155,7 @@ def private_chat(request, id):
     return render(request, 'chat/private_chat.html', {
                                               'message_form': message_form,
                                               'list_users': list_users.members.all,
+                                              'list_users1': list_users.id,
                                               'room_name_json': mark_safe(json.dumps(id)),
                                               'image_message': mark_safe(json.dumps(str(Message.image_message))),
                                               'username': mark_safe(json.dumps(request.user.username)),

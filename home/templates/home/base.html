@@ -5,7 +5,7 @@
       <meta charset="UTF-8">
       <title>{% block title %}{% endblock %}</title>
       {% block link %}{% endblock %}
-      <link rel="shortcut icon" href="media/favicon.ico" type="image/x-icon">
+      <link rel="shortcut icon" href="/media/favicon.ico" type="image/x-icon">
       <link rel="stylesheet" href="/static/style.css">
        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -20,10 +20,10 @@
   </li>
   {% if user.is_authenticated %}
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Моя страница</a>
+    <a class="nav-link dropdown-toggle" id="new_message1" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Моя страница</a>
     <div class="dropdown-menu">
       <a class="dropdown-item" href="{% url 'my_page_url' %}">Моя страница</a>
-      <a class="dropdown-item" href="{% url 'chat_url' %}">Сообщения</a>
+      <a class="dropdown-item" href="{% url 'chat_url' %}" id ="new_message2">Сообщения</a>
       <a class="dropdown-item" href="{% url 'my_page_edit_url' %}">Редактировать</a>
       <a class="dropdown-item" href="{% url 'out' %}" style="color:#0056b3;" >Выйти</a>
     </div>
@@ -44,7 +44,96 @@
 <!--  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>-->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+{% block script %}
+  <div id="chat-log" style="position:fixed;right: 2%;bottom: 1%;width: 15%;"></div>
 
+    <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+  <script>
+    var username = {{ user.id }};
+
+    var userSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/user/' + username + '/');
+
+    userSocket.onopen = function(e) {
+      fetchMessages();
+    }
+
+    userSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        if (data['command'] === 'messages') {
+          for (let i=0; i<data['messages'].length; i++) {
+            createMessage(data['messages'][i]);
+
+          }
+        } else if (data['command'] === 'new_message'){
+          createMessage(data['message']);
+
+        }
+    };
+
+    userSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#id_content').onkeyup = function(e) {
+        if (e.keyCode === 13) {  // enter, return
+            document.querySelector('#chat-message-submit').click();
+        }
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        var messageInputDom = document.getElementById('id_content');
+        var message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'from': username,
+            'room_name': username
+
+        }));
+        messageInputDom.value = '';
+    };
+
+    function fetchMessages() {
+      userSocket.send(JSON.stringify({'command': 'fetch_messages' }));
+    }
+
+    function createMessage(data) {
+
+      var author = data['author'],
+          first_name = data['first_name'],
+          image = data['image'],
+          id = data['id'],
+          read_message = data['read_message'],
+          slug = data['slug'],
+          room_id = data['room_id'],
+<!--          room_id = '/chat/' + room_id-->
+          timestamp = data['timestamp'],
+          owner_class = 'text-right';
+      if (author === username) {
+        owner_class = 'text-left';
+      }
+
+      var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body" ><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
+
+      if (read_message == 1){
+      $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')
+      let elem = document.getElementById('new_message1');
+      let elem_1 = document.getElementById('new_message');
+      elem.childNodes[0].data +='+'
+      elem_1.childNodes[0].data +='+'
+      setTimeout(function()
+      {
+      $("#chat_"+id).remove();
+      }, 10000);
+
+
+}
+   }
+
+  </script>
+{% endblock script %}
 
 </body>
 </html>
