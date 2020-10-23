@@ -84,9 +84,10 @@ class ChatConsumer(WebsocketConsumer):
 
         else:
             data_chats = {
+                'test': 'test',
                 'author': message.author.username,
-                'first_name': message.recipient.group_name,
-                'image': message.recipient.image_chat.url,
+                'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
+                'image': message.author.profile.image.url,
                 'id': message.author.profile.id,
                 'slug': message.author.profile.slug,
                 'content': message.content,
@@ -94,6 +95,17 @@ class ChatConsumer(WebsocketConsumer):
                 'read_message': read,
                 'room_id': message.recipient.id,
                 'timestamp': str(message.timestamp)[:16],
+
+                'author1': message.author.username,
+                'first_name1': message.recipient.group_name,
+                'image1': message.recipient.image_chat.url,
+                'id1': message.author.profile.id,
+                'slug1': message.author.profile.slug,
+                'content1': message.content,
+                'image_message1': mark_safe(json.dumps(str(message.image_message))),
+                'read_message1': read,
+                'room_id1': message.recipient.id,
+                'timestamp1': str(message.timestamp)[:16],
             }
         return data_chats
 

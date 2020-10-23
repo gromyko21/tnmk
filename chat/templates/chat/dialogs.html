@@ -154,15 +154,33 @@
           slug = data['slug'],
           room_id = data['room_id'],
           timestamp = data['timestamp'],
+
+          test = data['test']
+          first_name1 = data['first_name1'],
+          image1 = data['image1'],
+          id1 = data['id1'],
+          read_message1 = data['read_message1'],
+          slug1 = data['slug1'],
+          room_id1 = data['room_id1'],
+          timestamp1 = data['timestamp1'],
           owner_class = 'text-right';
       if (author === username) {
         owner_class = 'text-left';
       }
         $('#chat_'+room_id).remove();
-      var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
+
+    if (data['test'] == 'test'){
+
+       var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image1+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug1+'" style="float:left;">'+first_name1+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp1+'</p><h7>'+data.content1+'</h7></div></div>';
+
+        $('<div class="card" id="chat_'+room_id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log');
+}   else {
+          console.log('Сообщение в личный чат')
+
+           var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
 
       $('<div class="card" id="chat_'+room_id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log');
-
+    }
 
    }
 
