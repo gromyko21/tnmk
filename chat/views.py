@@ -106,14 +106,15 @@ def chat(request):
 
 # Загрузка фотографий в личных сообщениях
 def upload_private_chat(request):
+    # for request.FILES['image_message'] in request.FILES:
+    # print(request.FILES['image_message'][0])
 
     myfile = request.FILES['image_message']
+    print(myfile.name)
     fs = FileSystemStorage()
     filename = fs.save(myfile.name, myfile)
     uploaded_file_url = fs.url(filename)
-
     return HttpResponse(uploaded_file_url)
-
 
 
 # Страница личного чата
@@ -146,16 +147,13 @@ def private_chat(request, id):
 
     else:
         message_form = MessageForm()
+    context = {
+              'message_form': message_form,
+              'list_users': list_users.members.all,
+              'list_users1': list_users.id,
+              'room_name_json': mark_safe(json.dumps(id)),
+              # 'image_message': mark_safe(json.dumps(str(Message.image_message))),
+              'username': mark_safe(json.dumps(request.user.username)),
+              }
 
-
-    # new_data.save()
-
-    return render(request, 'chat/private_chat.html', {
-                                              'message_form': message_form,
-                                              'list_users': list_users.members.all,
-                                              'list_users1': list_users.id,
-                                              'room_name_json': mark_safe(json.dumps(id)),
-                                              'image_message': mark_safe(json.dumps(str(Message.image_message))),
-                                              'username': mark_safe(json.dumps(request.user.username)),
-                                              # 'image_message': json.dumps(str(Message.image_message)) # py3
-                                              })
+    return render(request, 'chat/private_chat.html', context)

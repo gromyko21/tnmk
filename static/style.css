@@ -5,3 +5,7 @@
 #new_message{
 background: #d3d3d3;
 }
+.image_private_chat {
+    max-width:40%;
+    max-height: 150px;
+}

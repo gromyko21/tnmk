@@ -15,11 +15,10 @@ class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
         chat_id = get_object_or_404(Chat, id=self.room_name)
-        messages = Message.objects.order_by('pk').filter(recipient=chat_id)[:4]
+        messages = Message.objects.order_by('-pk').filter(recipient=chat_id)[:5]
         count = Chat.objects.filter(id=self.room_name).annotate(Count('members'))
         count = count[0].members__count
         messages.count = count
-        #messages.filter().update(is_readed=True)
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -32,14 +31,21 @@ class ChatConsumer(WebsocketConsumer):
         author_user = User.objects.filter(username=author)[0]
 
         chat = Chat.objects.get(id=room_name)
-
-        message = Message.objects.create(
-            author=author_user,
-            content=data['message'],
-            # image_message=data['image_message'],
-
-            recipient=chat
-            )
+        try:
+            image_message = data['image']
+            message = Message.objects.create(
+                author=author_user,
+                content=data['message'],
+                image=image_message,
+                recipient=chat
+                )
+        except KeyError:
+            message = Message.objects.create(
+                author=author_user,
+                content=data['message'],
+                image='',
+                recipient=chat
+                )
         users = chat.members.all()
         for user in users:
             new_data = ReadMessage.objects.create(room_id=room_name, recipient=user.id, message_id=message.id)
@@ -76,7 +82,8 @@ class ChatConsumer(WebsocketConsumer):
                 'id': message.author.profile.id,
                 'slug': message.author.profile.slug,
                 'content': message.content,
-                'image_message': mark_safe(json.dumps(str(message.image_message))),
+                'image_message': message.image,
+                # 'image_message': mark_safe(json.dumps(str(message.image_message))),
                 'read_message': read,
                 'room_id': message.recipient.id,
                 'timestamp': str(message.timestamp)[:16],
@@ -91,7 +98,7 @@ class ChatConsumer(WebsocketConsumer):
                 'id': message.author.profile.id,
                 'slug': message.author.profile.slug,
                 'content': message.content,
-                'image_message': mark_safe(json.dumps(str(message.image_message))),
+                'image_message': message.image,
                 'read_message': read,
                 'room_id': message.recipient.id,
                 'timestamp': str(message.timestamp)[:16],
@@ -102,7 +109,7 @@ class ChatConsumer(WebsocketConsumer):
                 'id1': message.author.profile.id,
                 'slug1': message.author.profile.slug,
                 'content1': message.content,
-                'image_message1': mark_safe(json.dumps(str(message.image_message))),
+                'image_message1': message.image,
                 'read_message1': read,
                 'room_id1': message.recipient.id,
                 'timestamp1': str(message.timestamp)[:16],
@@ -120,11 +127,6 @@ class ChatConsumer(WebsocketConsumer):
 
         body_chat = Chat.objects.filter(id=self.room_name)
         body_chat = body_chat[0].members.all()
-        # for user in body_chat:
-        #     async_to_sync(self.channel_layer.group_add)(
-        #         'user_%s' % user.id,
-        #         self.channel_name
-        #     )
 
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,

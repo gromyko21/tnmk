@@ -27,11 +27,10 @@ class Message(models.Model):
     author = models.ForeignKey(User, verbose_name="Отправитель", on_delete=models.CASCADE)
     recipient = models.ForeignKey(Chat, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
     content = models.TextField("Сообщение", default='Нет сообщения')
-    image = models.TextField("Фотографии")
-    file = models.TextField("Файл")
+    image = models.TextField("Фотографии", blank=True, null=True)
+    file = models.TextField("Файл", blank=True, null=True)
     timestamp = models.DateTimeField('Дата сообщения', auto_now_add=True)
     is_readed = models.BooleanField('Прочитано', default=False)
-    # read_chat = models.ForeignKey(ReadMessage, related_name='readInChat', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = u'Сообщение'
