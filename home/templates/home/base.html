@@ -133,18 +133,17 @@
 
     }
       if (read_message == 1){
-      $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')
-      let elem = document.getElementById('new_message1');
-      let elem_1 = document.getElementById('new_message');
-      elem.childNodes[0].data +='+'
-      elem_1.childNodes[0].data +='+'
-      setTimeout(function()
-      {
-      $("#chat_"+id).remove();
-      }, 10000);
-
-
+        $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')
+        let elem = document.getElementById('new_message1');
+        let elem_1 = document.getElementById('new_message2');
+        elem.childNodes[0].data +='+'
+        elem_1.childNodes[0].data +='+'
+        setTimeout(function()
+        {
+        $("#chat_"+id).remove();
+        }, 10000);
 }
+
    }
 
   </script>

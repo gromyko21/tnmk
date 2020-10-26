@@ -10,6 +10,7 @@ import json
 from django.db.models import Count
 from itertools import groupby
 import os
+from django.core.files.storage import FileSystemStorage
 
 
 @login_required
@@ -105,16 +106,13 @@ def chat(request):
 
 # Загрузка фотографий в личных сообщениях
 def upload_private_chat(request):
-    a = request.POST.get('image_message')
-    a2 = request.POST.get('csrfmiddlewaretoken')
-    print(a, a2)
-    if request.method == 'POST':
-        with open('jghghj.png', 'w') as file:
-            os.chdir(r'/media') # X1
-            file.write(request.POST.get('image_message'))
-        # a = request.POST.get('image_message')
-        # print(a)
-    return HttpResponse("ok")
+
+    myfile = request.FILES['image_message']
+    fs = FileSystemStorage()
+    filename = fs.save(myfile.name, myfile)
+    uploaded_file_url = fs.url(filename)
+
+    return HttpResponse(uploaded_file_url)
 
 
 
