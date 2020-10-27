@@ -29,12 +29,14 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <textarea name="content" required="" id="id_content" style="width:100%;"></textarea></br>
-<!--    <input type="file" name="image_message" accept="image/*" id="id_image_message">-->
-<!--    <input type="image" name='image_message' id="id_image_message" >-->
     <button id="chat-message-submit"  type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
 
-<input id="upload" type="file" onchange="selectFile()" required multiple >
+  <input id="upload" type="file" style="display: none;" onchange="selectFile()" accept="image/*" required multiple>
+  <a href="#" style="width:47.5%; float:left; margin-right:5%;" class="btn btn-outline-primary" onclick="$('#upload').trigger('click');">Загрузите картинку(до 5 штук)</a>
+
+  <input id="upload_1" type="file" style="display: none;" onchange="selectFile_1()" required multiple>
+  <a href="#" style="width:47.5%; float:left;" class="btn btn-outline-primary" onclick="$('#upload_1').trigger('click');">Загрузите файл(до 5 штук)</a>
 
 {% block script %}{% endblock script %}
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
@@ -95,6 +97,7 @@
           first_name = data['first_name'],
           image = data['image'],
           image_message = data['image_message'],
+          file_message = data['file_message'],
           slug = data['slug'],
           id = data['id'],
           timestamp = data['timestamp'],
@@ -102,24 +105,40 @@
       if (author === username) {
         owner_class = 'text-left';
       }
+      if(image_message){
       x = image_message.split('/media/')
-      console.log(x)
       d = x.length
 
       let list_image = ''
       for ( let y = 0; y < d; y++){
         if (x[y]){
-          one_image = '<img class="image_private_chat" src="/media/' + x[y]+ '">'
-          console.log(one_image)
+          one_image = '<a data-fancybox="gallery" href="/media/message_image/' + x[y]+ '"><img class="image_private_chat" src="/media/message_image/' + x[y]+ '"></a>'
           list_image += one_image
         }
       }
+
       var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></br>'+list_image+'</div></div></div>';
 
         $('#chat-log').append(text);
-
     }
+      else{
+      console.log(file_message)
+        x = file_message.split('/media/')
+        d = x.length
 
+        let list_image = ''
+        for ( let y = 0; y < d; y++){
+          if (x[y]){
+            one_image = '<a href="/media/message_image/' + x[y]+ '" download>' + x[y]+ '</a></br>'
+            list_image += one_image
+          }
+        }
+
+        var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></br>'+list_image+'</div></div></div>';
+
+          $('#chat-log').append(text);
+      }
+}
     function selectFile() {
 	e = document.getElementById('upload')
     let count_images = e.files.length
@@ -139,7 +158,6 @@
       alert('Максимальный размер фотографии 3 мб');
     } else {
 
-    console.log(item, item1, item2)
     var $input = $("#uploadimage");
 
     var fd = new FormData;
@@ -165,7 +183,112 @@
             'image': data,
             'from': username,
             'room_name': roomName,
+        }))
 
+        }
+    });
+    }
+
+  } else {
+    alert('Файл не найден');
+  }
+} function selectFile() {
+	e = document.getElementById('upload')
+    let count_images = e.files.length
+    let i = 0
+
+  if(e.files[0]) {
+
+    let item = e.files[0];
+    let item1 = e.files[1];
+    let item2 = e.files[2];
+    let item3 = e.files[3];
+    let item4 = e.files[4];
+
+    let filesize = item.size;
+    let filesizeMB = (filesize / (1024 * 1024)).toFixed(2);
+    if (filesizeMB >= 3) {
+      alert('Максимальный размер фотографии 3 мб');
+    } else {
+
+    var $input = $("#uploadimage");
+
+    var fd = new FormData;
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fd.append('image_message', item);
+    fd.append('image_message1', item1);
+    fd.append('image_message2', item2);
+    fd.append('image_message3', item3);
+    fd.append('image_message4', item4);
+
+    $.ajax({
+
+        url: '/chat/upload/',
+        type: 'POST',
+        data: fd,
+
+        processData: false,
+        contentType: false,
+        success: function (data) {
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': 'Изображение',
+            'image': data,
+            'from': username,
+            'room_name': roomName,
+        }))
+
+        }
+    });
+    }
+
+  } else {
+    alert('Файл не найден');
+  }
+} function selectFile_1() {
+	e = document.getElementById('upload_1')
+    let count_images = e.files.length
+    let i = 0
+
+  if(e.files[0]) {
+
+    let item = e.files[0];
+    let item1 = e.files[1];
+    let item2 = e.files[2];
+    let item3 = e.files[3];
+    let item4 = e.files[4];
+
+    let filesize = item.size;
+    let filesizeMB = (filesize / (1024 * 1024)).toFixed(2);
+    if (filesizeMB >= 3) {
+      alert('Максимальный размер фотографии 3 мб');
+    } else {
+
+    var $input = $("#uploadimage");
+
+    var fd = new FormData;
+    fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fd.append('image_message', item);
+    fd.append('image_message1', item1);
+    fd.append('image_message2', item2);
+    fd.append('image_message3', item3);
+    fd.append('image_message4', item4);
+
+    $.ajax({
+
+        url: '/chat/upload/',
+        type: 'POST',
+        data: fd,
+
+        processData: false,
+        contentType: false,
+        success: function (data) {
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': 'Файл',
+            'file': data,
+            'from': username,
+            'room_name': roomName,
         }))
 
         }

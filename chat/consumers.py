@@ -33,22 +33,31 @@ class ChatConsumer(WebsocketConsumer):
 
         chat = Chat.objects.get(id=room_name)
         try:
-            image_message = data['image']
-            # image_message = re.split(r'/media/', image_message)[1:]
-            # print(image_message)
+            file_message = data['file']
             message = Message.objects.create(
                 author=author_user,
                 content=data['message'],
-                image=image_message,
+                file=file_message,
                 recipient=chat
             )
         except KeyError:
-            message = Message.objects.create(
-                author=author_user,
-                content=data['message'],
-                image='',
-                recipient=chat
+            try:
+                image_message = data['image']
+                # image_message = re.split(r'/media/', image_message)[1:]
+                # print(image_message)
+                message = Message.objects.create(
+                    author=author_user,
+                    content=data['message'],
+                    image=image_message,
+                    recipient=chat
                 )
+            except KeyError:
+                message = Message.objects.create(
+                    author=author_user,
+                    content=data['message'],
+                    image='',
+                    recipient=chat
+                    )
         users = chat.members.all()
         for user in users:
             new_data = ReadMessage.objects.create(room_id=room_name, recipient=user.id, message_id=message.id)
@@ -86,6 +95,7 @@ class ChatConsumer(WebsocketConsumer):
                 'slug': message.author.profile.slug,
                 'content': message.content,
                 'image_message': message.image,
+                'file_message': message.file,
                 # 'image_message': mark_safe(json.dumps(str(message.image_message))),
                 'read_message': read,
                 'room_id': message.recipient.id,
@@ -102,6 +112,7 @@ class ChatConsumer(WebsocketConsumer):
                 'slug': message.author.profile.slug,
                 'content': message.content,
                 'image_message': message.image,
+                'file_message': message.file,
                 'read_message': read,
                 'room_id': message.recipient.id,
                 'timestamp': str(message.timestamp)[:16],

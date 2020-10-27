@@ -18,9 +18,9 @@
   <div class="card-body">
     <h5 class="card-title">{{ name.title }}</h5>
     {% if name.image %}
-      <img src="{{ name.image.url }}" class="card-img-top" style="width:150px;">
-      <img src="{{ name.image_two.url }}" class="card-img-top" style="width:150px;">
-      <img src="{{ name.image_three.url }}" class="card-img-top" style="width:150px;">
+    <a data-fancybox="gallery" href='{{ name.image.url }}'><img src="{{ name.image.url }}" class="card-img-top" style="width:150px;"></a>
+    <a data-fancybox="gallery" href='{{ name.image_two.url }}'><img src="{{ name.image_two.url }}" class="card-img-top" style="width:150px;"></a>
+    <a data-fancybox="gallery" href='{{ name.image_three.url }}'><img src="{{ name.image_three.url }}" class="card-img-top" style="width:150px;"></a>
     {% endif %}
       <div class="overflow-auto" >
         <p style="overflow: hidden;

@@ -6,7 +6,7 @@
 <div class="container">
   <div class="row" style="margin-top:3%;">
     <div class="col">
-      <img src='/media/{{ user.profile.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
+      <a data-fancybox="gallery" href='/media/{{ user.profile.image }}'><img src='/media/{{ user.profile.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
     </div>
     <div class="col">
       <h4>{{ user.profile.first_name }} {{ user.profile.last_name }}</h4>
@@ -55,7 +55,7 @@
     <p>{{ post.text }}</p>
   </div>
   {% if post.image.name %}
-      <img src="{{ post.image.url }}" class="card-img-top" style="max-width:100%;">
+    <a data-fancybox="gallery" href="{{ post.image.url }}"><img src="{{ post.image.url }}" class="card-img-top" style="max-width:100%;"></a>
   {% endif %}
   </div>
 </div>

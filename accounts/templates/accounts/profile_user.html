@@ -6,7 +6,7 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <img src='/media/{{ user_data.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;">
+        <a data-fancybox="gallery" href='/media/{{ user_data.image }}'><img src='/media/{{ user_data.image }}' alt="Не удалось загрузить изображение" class="img-thumbnail" style="width:200px;"></a>
         <div>
           <form method="post">
             {% csrf_token %}
@@ -44,7 +44,7 @@
       <p>{{ post.text }}</p>
     </div>
     {% if post.image.name %}
-      <img src="{{ post.image.url }}" class="card-img-top" style="max-width:100%;">
+    <a data-fancybox="gallery" href='/media/{{ user_data.image }}'><img src='/media/{{ user_data.image }}' class="card-img-top" style="max-width:100%;"></a>
     {% endif %}
   </div>
 </div>

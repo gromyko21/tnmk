@@ -104,12 +104,11 @@ def chat(request):
 
 # Загрузка фотографий в личных сообщениях
 def upload_private_chat(request):
-    # for request.FILES['image_message'] in request.FILES:
-    # print(request.FILES['image_message'][0])
     list = []
-    fs = FileSystemStorage()
+    fs = FileSystemStorage(location='./media/message_image')
 
     myfile = request.FILES.get('image_message')
+    print(myfile)
     filename = fs.save(myfile.name, myfile)
     uploaded_file_url = fs.url(filename)
     list.append(uploaded_file_url)
@@ -145,7 +144,7 @@ def upload_private_chat(request):
         list.append(uploaded_file_url4)
     except KeyError:
         pass
-    # print(list)
+    print(list)
     return HttpResponse(list)
 
 
