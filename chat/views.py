@@ -77,8 +77,8 @@ def chat(request):
             pass
 
         chat.message = message
-    #     # Получаем количество получателей в комнате
-    #     # Чтобы решить личный чат это или беседа
+        # Получаем количество получателей в комнате
+        # Чтобы решить личный чат это или беседа
         count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
         count = count[0].members__count
         chat.count = count
@@ -90,14 +90,12 @@ def chat(request):
         context = {
                        'read_message': read_message,
                        'body_chat': new_list,
-                       # 'members': body_chat.members.all[1],
                        'room_name_json': mark_safe(json.dumps(request.user.id)),
                        'username': mark_safe(json.dumps(request.user.username)),
                        }
     except UnboundLocalError:
         context = {
                    'body_chat': new_list,
-                   # 'members': body_chat.members.all[1],
                    'room_name_json': mark_safe(json.dumps(request.user.id)),
                    'username': mark_safe(json.dumps(request.user.username)),
                    }
@@ -108,13 +106,47 @@ def chat(request):
 def upload_private_chat(request):
     # for request.FILES['image_message'] in request.FILES:
     # print(request.FILES['image_message'][0])
-
-    myfile = request.FILES['image_message']
-    print(myfile.name)
+    list = []
     fs = FileSystemStorage()
+
+    myfile = request.FILES.get('image_message')
     filename = fs.save(myfile.name, myfile)
     uploaded_file_url = fs.url(filename)
-    return HttpResponse(uploaded_file_url)
+    list.append(uploaded_file_url)
+
+    try:
+        myfile1 = request.FILES['image_message1']
+        filename1 = fs.save(myfile1.name, myfile1)
+        uploaded_file_url1 = fs.url(filename1)
+        list.append(uploaded_file_url1)
+    except KeyError:
+        pass
+
+    try:
+        myfile2 = request.FILES['image_message2']
+        filename2 = fs.save(myfile2.name, myfile2)
+        uploaded_file_url2 = fs.url(filename2)
+        list.append(uploaded_file_url2)
+    except KeyError:
+        pass
+
+    try:
+        myfile3 = request.FILES['image_message3']
+        filename3 = fs.save(myfile3.name, myfile3)
+        uploaded_file_url3 = fs.url(filename3)
+        list.append(uploaded_file_url3)
+    except KeyError:
+        pass
+
+    try:
+        myfile4 = request.FILES['image_message4']
+        filename4 = fs.save(myfile4.name, myfile4)
+        uploaded_file_url4 = fs.url(filename4)
+        list.append(uploaded_file_url4)
+    except KeyError:
+        pass
+    # print(list)
+    return HttpResponse(list)
 
 
 # Страница личного чата

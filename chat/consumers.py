@@ -6,6 +6,7 @@ from .models import *
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db.models import Count
 from django.utils.safestring import mark_safe
+import re
 
 
 User = get_user_model()
@@ -33,12 +34,14 @@ class ChatConsumer(WebsocketConsumer):
         chat = Chat.objects.get(id=room_name)
         try:
             image_message = data['image']
+            # image_message = re.split(r'/media/', image_message)[1:]
+            # print(image_message)
             message = Message.objects.create(
                 author=author_user,
                 content=data['message'],
                 image=image_message,
                 recipient=chat
-                )
+            )
         except KeyError:
             message = Message.objects.create(
                 author=author_user,

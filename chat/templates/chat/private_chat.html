@@ -102,7 +102,19 @@
       if (author === username) {
         owner_class = 'text-left';
       }
-      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></br>'+data.image_message+'</div></div></div>';
+      x = image_message.split('/media/')
+      console.log(x)
+      d = x.length
+
+      let list_image = ''
+      for ( let y = 0; y < d; y++){
+        if (x[y]){
+          one_image = '<img class="image_private_chat" src="/media/' + x[y]+ '">'
+          console.log(one_image)
+          list_image += one_image
+        }
+      }
+      var text = '<div class="card"><div class="media" ><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></br>'+list_image+'</div></div></div>';
 
         $('#chat-log').append(text);
 
@@ -110,40 +122,56 @@
 
     function selectFile() {
 	e = document.getElementById('upload')
+    let count_images = e.files.length
+    let i = 0
+
   if(e.files[0]) {
+
     let item = e.files[0];
+    let item1 = e.files[1];
+    let item2 = e.files[2];
+    let item3 = e.files[3];
+    let item4 = e.files[4];
 
     let filesize = item.size;
     let filesizeMB = (filesize / (1024 * 1024)).toFixed(2);
     if (filesizeMB >= 3) {
       alert('Максимальный размер фотографии 3 мб');
     } else {
-    console.log(e.files)
+
+    console.log(item, item1, item2)
     var $input = $("#uploadimage");
+
     var fd = new FormData;
-
-
     fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     fd.append('image_message', item);
+    fd.append('image_message1', item1);
+    fd.append('image_message2', item2);
+    fd.append('image_message3', item3);
+    fd.append('image_message4', item4);
 
     $.ajax({
+
         url: '/chat/upload/',
         type: 'POST',
         data: fd,
+
         processData: false,
         contentType: false,
         success: function (data) {
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': 'Изображение',
-            'image': '<img class="image_private_chat" src ="' +data+ '">',
+            'image': data,
             'from': username,
             'room_name': roomName,
+
         }))
 
         }
     });
     }
+
   } else {
     alert('Файл не найден');
   }
