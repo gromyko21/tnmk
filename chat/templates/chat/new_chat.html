@@ -2,16 +2,32 @@
 {% load static %}
 {% block title %}Новый чат{% endblock %}
 {% block content %}
+<div class="mx-auto"style="width: 35%;;">
 <form method="POST" enctype=multipart/form-data>
-    {% csrf_token %}
-    Выбрать получателей(нажмите ctrl и не забудьте указать получателем себя :))
-    {{ new_chat.members }}
+    {% csrf_token %}</br>
     Название группы:
-    {{ new_chat.group_name }}
+    {{ new_chat.group_name }}</br>
     Главное изображение группы:
-    {{ new_chat.image_chat }}
+    {{ new_chat.image_chat }}</br></br></br>
+    <p><b>Выбор пользователей</b></p>
+    {% for user in users %}
+        {% if request.user.username == user.username %}
+            <input type="checkbox" required="" style="display:none" name="members" value="{{ user.id }}" id="id_members" checked></br>
+        {% else %}
+        <div style="height:100px;">
+
+            <img src="/media/{{ user.profile.image }}" style="width:100px; padding:5px;" class="mr-3">
+            <a href="/account/{{ user.username }}">{{ user.profile.first_name }} {{ user.profile.last_name }}</a>
+            <input name="members" value="{{ user.id }}" id="id_members" type="checkbox"></br>
+        </div>
+        {% endif %}
+    {% endfor %}
+
+    Выбрать получателей(нажмите ctrl и не забудьте указать получателем себя :))
+<!--    {{ new_chat.members }}</br>-->
     <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
+</div>
 {% if chat %}
   {% for chat in chat %}
     <div class="card text-center"  onClick="document.location='{{ chat.slug }}'">

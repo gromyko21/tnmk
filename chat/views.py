@@ -11,6 +11,7 @@ from django.db.models import Count
 from itertools import groupby
 import os
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User
 
 
 @login_required
@@ -26,7 +27,9 @@ def new_chat(request):
     else:
         new_chat_form = ChatForm()
     return render(request, 'chat/new_chat.html',
-                  {'new_chat': new_chat_form,
+                  {
+                   'users': User.objects.all(),
+                   'new_chat': new_chat_form,
                    'username': mark_safe(json.dumps(request.user.username)),
                    })
 
@@ -157,7 +160,7 @@ def private_chat(request, id):
     # Нерпочитанные сообщения
     messages = Message.objects.filter(recipient=list_users)
     for message in messages:
-        read_message = ReadMessage.objects.filter(message_id=message.id, recipient= request.user.id)
+        read_message = ReadMessage.objects.filter(message_id=message.id, recipient=request.user.id)
         for item in read_message:
             item.is_read = True
             item.save()

@@ -19,7 +19,6 @@ class ChatForm(forms.ModelForm):
     '''
     Форма для создания нового чата
     '''
-
     class Meta:
         model = Chat
         fields = ('group_name', 'members', 'image_chat')
