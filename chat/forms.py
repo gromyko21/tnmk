@@ -1,12 +1,13 @@
 from django import forms
 from .models import *
+from sanitizer.forms import SanitizedCharField
 
 
 class MessageForm(forms.ModelForm):
     '''
     Форма для чата
     '''
-    message = forms.CharField()
+    message = SanitizedCharField(strip=False)
 
     class Meta:
         model = Message

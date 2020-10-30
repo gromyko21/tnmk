@@ -157,9 +157,10 @@ def any_user(request, slug):
             for i in chat_prov:
                 # Если хоть один личный чат существует - не создаем комнату
                 if i.members.count() == 2:
+                    room_id = i.id
                     count = 2
                     if count == 2:
-                        return redirect('chat_url')
+                        return redirect('/chat/' + str(room_id))
             else:
                 if new_chat_form.is_valid():
                     new_chat_form.instance.creater = request.user

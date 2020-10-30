@@ -26,7 +26,7 @@ class ReadMessage(models.Model):
 class Message(models.Model):
     author = models.ForeignKey(User, verbose_name="Отправитель", on_delete=models.CASCADE)
     recipient = models.ForeignKey(Chat, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
-    content = models.TextField("Сообщение", default='Нет сообщения')
+    content = models.TextField("Сообщение", default='Нет сообщения', max_length=2000)
     image = models.TextField("Фотографии", blank=True, null=True)
     file = models.TextField("Файл", blank=True, null=True)
     timestamp = models.DateTimeField('Дата сообщения', auto_now_add=True)

@@ -36,50 +36,55 @@ class ChatConsumer(WebsocketConsumer):
         author_user = User.objects.filter(username=author)[0]
 
         chat = Chat.objects.get(id=room_name)
-        try:
-            file_message = data['file']
-            message = Message.objects.create(
-                author=author_user,
-                content=data['message'],
-                file=file_message,
-                recipient=chat
-            )
-        except KeyError:
+        list_chat = []
+        chat_prov = chat.members.all()
+        for x in chat_prov:
+            list_chat.append(x)
+        if self.scope['user'] not in list_chat:
+           pass
+        else:
             try:
-                image_message = data['image']
-                # image_message = re.split(r'/media/', image_message)[1:]
-                # print(image_message)
+                file_message = data['file']
                 message = Message.objects.create(
                     author=author_user,
                     content=data['message'],
-                    image=image_message,
+                    file=file_message,
                     recipient=chat
                 )
             except KeyError:
-                message = Message.objects.create(
-                    author=author_user,
-                    content=data['message'],
-                    image='',
-                    recipient=chat
+                try:
+                    image_message = data['image']
+                    # image_message = re.split(r'/media/', image_message)[1:]
+                    message = Message.objects.create(
+                        author=author_user,
+                        content=data['message'],
+                        image=image_message,
+                        recipient=chat
                     )
-        users = chat.members.all()
-        for user in users:
-            new_data = ReadMessage.objects.create(room_id=room_name, recipient=user.id, message_id=message.id)
-            new_data.save()
-        # print(new_data)
+                except KeyError:
+                    message = Message.objects.create(
+                        author=author_user,
+                        content=data['message'],
+                        image='',
+                        recipient=chat
+                        )
+            users = chat.members.all()
+            for user in users:
+                new_data = ReadMessage.objects.create(room_id=room_name, recipient=user.id, message_id=message.id)
+                new_data.save()
 
-        message1 = Message.objects.order_by('-pk').filter(recipient=chat)[0:1]
+            message1 = Message.objects.order_by('-pk').filter(recipient=chat)[0:1]
 
-        count = Chat.objects.filter(id=room_name).annotate(Count('members'))
-        count = count[0].members__count
-        chat.count = count
-        chat.message = message1
+            count = Chat.objects.filter(id=room_name).annotate(Count('members'))
+            count = count[0].members__count
+            chat.count = count
+            chat.message = message1
 
-        content = {
-            'command': 'new_message',
-            'message': self.message_to_json(message)
-        }
-        return self.send_chat_message(content)
+            content = {
+                'command': 'new_message',
+                'message': self.message_to_json(message)
+            }
+            return self.send_chat_message(content)
 
     def messages_to_json(self, messages):
         result = []
@@ -247,7 +252,6 @@ class AllChatsConsumer(WebsocketConsumer):
                 if message.message[0].is_readed == False:
                     you = message.message[0].author.profile.first_name + ': '
                     read = 1
-
 
         # Проверка на загрузку фоторгафии и имени пользователя в личной беседе
         if self.scope['user'] == message.members.all()[0]:

@@ -18,12 +18,37 @@ from django.contrib.auth.models import User
 def new_chat(request):
     if request.method == 'POST':
         new_chat_form = ChatForm(request.POST, request.FILES)
+
         if new_chat_form.is_valid():
             new_chat_form.instance.creater = request.user
-            new_chat_form.save()
-            return redirect('chat_url')
-        else:
-            HttpResponseNotFound("<h2>Введены неверные данные</h2>")
+            data_chat_form = new_chat_form.cleaned_data.get("members")
+            #Если 2 пользователя в беседе и между ними есть чат - редирект на их чат
+            if data_chat_form.count() == 2:
+                print('2 пользователя')
+                chat_prov = Chat.objects.filter((Q(creater=data_chat_form[0].profile.id) & Q(members=data_chat_form[1].profile.id)) |
+                                                (Q(creater=data_chat_form[1].profile.id) & Q(members=data_chat_form[0].profile.id)))
+                # если их чат существует - открыть его
+                for i in chat_prov:
+                    if i.members.count() == 2:
+                        room_id = i.id
+                        return redirect(f'/chat/{room_id}')
+                # иначе - создать
+                else:
+                    new_chat_form.instance.group_name = data_chat_form[0].profile.slug + data_chat_form[1].profile.slug
+                    new_chat_form.save()
+                    id_room = new_chat_form.save().id
+                    # создание первого сообщения при создании чата
+                    # message_form = MessageForm(request.POST)
+                    # message_form.instance.author = request.user
+                    # message_form.instance.recipient = id_room
+                    # message_form.instance.content = 'Создан новый чат'
+                    # message_form.save()
+                    return redirect(f'/chat/{id_room}')
+            else:
+                new_chat_form.instance.group_name = data_chat_form[0].profile.slug + data_chat_form[1].profile.slug
+                new_chat_form.save()
+                return redirect(f'chat{new_chat_form.save().id}')
+
     else:
         new_chat_form = ChatForm()
     return render(request, 'chat/new_chat.html',
@@ -147,7 +172,6 @@ def upload_private_chat(request):
         list.append(uploaded_file_url4)
     except KeyError:
         pass
-    print(list)
     return HttpResponse(list)
 
 
@@ -173,7 +197,6 @@ def private_chat(request, id):
         if message_form.is_valid():
             message_form.instance.author = request.user
             message_form.instance.recipient = list_users
-
             message_form.save()
 
         else:
@@ -181,6 +204,7 @@ def private_chat(request, id):
 
     else:
         message_form = MessageForm()
+
     context = {
               'message_form': message_form,
               'list_users': list_users.members.all,

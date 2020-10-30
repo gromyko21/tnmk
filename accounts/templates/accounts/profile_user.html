@@ -10,7 +10,6 @@
         <div>
           <form method="post">
             {% csrf_token %}
-<!--            {{ start_chat }}-->
             <input type="hidden" name="group_name" maxlength="50" required="" id="id_group_name" value="От {{ user_data.user.username }} к {{ user }}">
             <select  name="members" required="" id="id_members" multiple="" style="display:none">
                 <option selected value="{{ user_data.user.id }}">{{ user_data.user.username }}</option>

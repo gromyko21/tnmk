@@ -51,6 +51,27 @@
 
     <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
   <script>
+let blink = false;
+var name = document.getElementsByTagName("title")[0].text;
+  function new_message () {
+    var newTxt="Новое уведомление";
+      var oldTxt = name;
+      var theTitle = document.getElementsByTagName("title")[0];
+      var link = document.querySelector("link[rel*='shortcut icon']") || document.createElement('link');
+      link.type = 'image/png';
+      if (blink) {
+        theTitle.text = newTxt;
+        link.href = '/favicon-1.png';
+        blink = false;
+      } else {
+        theTitle.text = oldTxt;
+        link.href = '/favicon.png';
+        blink = true;
+      }
+}
+
+
+
     var username = {{ user.id }};
 
     var userSocket = new ReconnectingWebSocket(
@@ -128,11 +149,16 @@
     if (data['test'] == 'test'){
 
        var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image1+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug1+'" style="float:left;">'+first_name1+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp1+'</p><h7>'+data.content1+'</h7></div></div>';
+       let new_alert; new_alert = setInterval(function () {
+           new_message()
+          }, 1000);
 
 }   else {
 
            var read = '<div class="media'+((read_message) ? ' new-message' : '')+'" id="new_message"><img src="'+image+'" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение"><div class="media-body"><h7 class="mt-0"><a href="/account/'+slug+'" style="float:left;">'+first_name+'</a><p style="font-size:10pt; color: #5f5f5f; text-align:left;">&#160; &#160;'+timestamp+'</p><h7>'+data.content+'</h7></div></div>';
-
+          let new_alert; new_alert = setInterval(function () {
+                   new_message()
+                  }, 1000);
     }
       if (read_message == 1){
         $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')

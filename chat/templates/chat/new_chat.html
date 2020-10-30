@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Новый чат{% endblock %}
 {% block content %}
-<div class="mx-auto"style="width: 35%;;">
+<div class="mx-auto"style="width: 35%;">
 <form method="POST" enctype=multipart/form-data>
     {% csrf_token %}</br>
     Название группы:
@@ -17,14 +17,12 @@
         <div style="height:100px;">
 
             <img src="/media/{{ user.profile.image }}" style="width:100px; padding:5px;" class="mr-3">
-            <a href="/account/{{ user.username }}">{{ user.profile.first_name }} {{ user.profile.last_name }}</a>
+            <a href="/account/{{ user.profile.slug }}">{{ user.profile.first_name }} {{ user.profile.last_name }}</a>
             <input name="members" value="{{ user.id }}" id="id_members" type="checkbox"></br>
         </div>
         {% endif %}
     {% endfor %}
 
-    Выбрать получателей(нажмите ctrl и не забудьте указать получателем себя :))
-<!--    {{ new_chat.members }}</br>-->
     <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
 </form>
 </div>
