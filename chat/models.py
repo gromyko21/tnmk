@@ -30,7 +30,6 @@ class Message(models.Model):
     image = models.TextField("Фотографии", blank=True, null=True)
     file = models.TextField("Файл", blank=True, null=True)
     timestamp = models.DateTimeField('Дата сообщения', auto_now_add=True)
-    is_readed = models.BooleanField('Прочитано', default=False)
 
     class Meta:
         verbose_name = u'Сообщение'

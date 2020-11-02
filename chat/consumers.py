@@ -101,11 +101,11 @@ class ChatConsumer(WebsocketConsumer):
                 'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
                 'image': message.author.profile.image.url,
                 'id': message.author.profile.id,
+                'message_id': message.id,
                 'slug': message.author.profile.slug,
                 'content': message.content,
                 'image_message': message.image,
                 'file_message': message.file,
-                # 'image_message': mark_safe(json.dumps(str(message.image_message))),
                 'read_message': read,
                 'room_id': message.recipient.id,
                 'timestamp': str(message.timestamp)[:16],
@@ -118,6 +118,7 @@ class ChatConsumer(WebsocketConsumer):
                 'first_name': message.author.profile.first_name + ' ' + message.author.profile.last_name,
                 'image': message.author.profile.image.url,
                 'id': message.author.profile.id,
+                'message_id': message.id,
                 'slug': message.author.profile.slug,
                 'content': message.content,
                 'image_message': message.image,
@@ -130,6 +131,7 @@ class ChatConsumer(WebsocketConsumer):
                 'first_name1': message.recipient.group_name,
                 'image1': message.recipient.image_chat.url,
                 'id1': message.author.profile.id,
+                'message_id1': message.id,
                 'slug1': message.author.profile.slug,
                 'content1': message.content,
                 'image_message1': message.image,
@@ -199,23 +201,7 @@ class AllChatsConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
         pass
-        # # messages = Chat.objects.order_by('received_messages__timestamp')#.filter(members=self.scope['user'])
-        #
-        # for chat in messages:
-        #     chat_id = get_object_or_404(Chat, id=chat.id)
-        #     message = Message.objects.order_by('-pk').filter(recipient=chat_id)[0:1]
-        #     chat.message = message
-        #     # Получаем количество получателей в комнате
-        #     # Чтобы решить личный чат это или беседа
-        #     count = Chat.objects.filter(id=chat_id.id).annotate(Count('members'))
-        #     count = count[0].members__count
-        #     chat.count = count
-        #
-        # content = {
-        #     'command': 'messages',
-        #     'messages': self.messages_to_json(messages)
-        # }
-        # self.send_message(content)
+
 
     def new_message(self, data):
         author = data['from']

@@ -198,6 +198,19 @@ def upload_private_chat(request):
 def private_chat(request, id):
 
     list_users = Chat.objects.get(id=id)
+    count_members = list_users.members.count()
+    list_members = list_users.members.all()
+
+    if count_members == 2:
+        if request.user == list_members[0]:
+            name_chat = list_members[1].profile.first_name + ' ' + list_members[1].profile.last_name
+            slug_chat = list_members[1].profile.slug
+        else:
+            name_chat = list_members[0].profile.first_name + ' ' + list_members[0].profile.last_name
+            slug_chat = list_members[0].profile.slug
+    else:
+        name_chat = list_users.group_name
+        slug_chat = ''
 
     # Нерпочитанные сообщения
     messages = Message.objects.filter(recipient=list_users)
@@ -224,6 +237,8 @@ def private_chat(request, id):
         message_form = MessageForm()
 
     context = {
+              'name_chat': name_chat,
+              'slug_chat': slug_chat,
               'message_form': message_form,
               'list_users': list_users.members.all,
               'list_users1': list_users.id,
@@ -237,8 +252,11 @@ def private_chat(request, id):
 
 def delete_message(request, id):
     try:
-        person = Message.objects.get(id=id)
-        person.delete()
-        return redirect("my_page_url")
+        chat = Message.objects.get(id=id)
+        if request.user == chat.author:
+            chat.delete()
+        else:
+            pass
+        return redirect(f"/chat/{chat.recipient.id}")
     except Message.DoesNotExist:
         return HttpResponseNotFound("<h2>Post not found</h2>")

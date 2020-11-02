@@ -181,7 +181,7 @@ def any_user(request, slug):
 
                 return redirect(f'/chat/{chat_id}')
             else:
-                    HttpResponseNotFound("<h2>Введены неверные данные</h2>")
+                HttpResponseNotFound("<h2>Введены неверные данные</h2>")
         else:
             if new_chat_form.is_valid():
                 new_chat_form.instance.creater = request.user
