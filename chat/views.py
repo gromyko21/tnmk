@@ -32,22 +32,40 @@ def new_chat(request):
                     if i.members.count() == 2:
                         room_id = i.id
                         return redirect(f'/chat/{room_id}')
+
                 # иначе - создать
                 else:
-                    new_chat_form.instance.group_name = data_chat_form[0].profile.slug + data_chat_form[1].profile.slug
+                    new_chat_form.instance.group_name = 'От ' + data_chat_form[0].profile.slug + ' к ' + data_chat_form[1].profile.slug
                     new_chat_form.save()
                     id_room = new_chat_form.save().id
                     # создание первого сообщения при создании чата
-                    # message_form = MessageForm(request.POST)
-                    # message_form.instance.author = request.user
-                    # message_form.instance.recipient = id_room
-                    # message_form.instance.content = 'Создан новый чат'
-                    # message_form.save()
+                    message = Message.objects.create(
+                        author=request.user,
+                        recipient=new_chat_form.save(),
+                        content=request.user.profile.first_name + ' открыл с вами чат!'
+                    )
+                    # создаем запись о чате(для непрочитанных сообщениях) в бд
+                    users = new_chat_form.save().members.all()
+                    for user in users:
+                        new_data = ReadMessage.objects.create(room_id=id_room, recipient=user.id, message_id=message.id)
+                        new_data.save()
+
                     return redirect(f'/chat/{id_room}')
             else:
-                new_chat_form.instance.group_name = data_chat_form[0].profile.slug + data_chat_form[1].profile.slug
                 new_chat_form.save()
-                return redirect(f'chat{new_chat_form.save().id}')
+                id_room = new_chat_form.save().id
+                # создание первого сообщения при создании чата
+                message = Message.objects.create(
+                    author=request.user,
+                    recipient=new_chat_form.save(),
+                    content=request.user.profile.first_name + ' открыл с вами чат!'
+                )
+                # создаем запись о чате(для непрочитанных сообщениях) в бд
+                users = new_chat_form.save().members.all()
+                for user in users:
+                    new_data = ReadMessage.objects.create(room_id=id_room, recipient=user.id, message_id=message.id)
+                    new_data.save()
+                return redirect(f'/chat/{new_chat_form.save().id}')
 
     else:
         new_chat_form = ChatForm()
@@ -116,11 +134,11 @@ def chat(request):
                 return a
     try:
         context = {
-                       'read_message': read_message,
-                       'body_chat': new_list,
-                       'room_name_json': mark_safe(json.dumps(request.user.id)),
-                       'username': mark_safe(json.dumps(request.user.username)),
-                       }
+                   'read_message': read_message,
+                   'body_chat': new_list,
+                   'room_name_json': mark_safe(json.dumps(request.user.id)),
+                   'username': mark_safe(json.dumps(request.user.username)),
+                   }
     except UnboundLocalError:
         context = {
                    'body_chat': new_list,
@@ -215,3 +233,12 @@ def private_chat(request, id):
               }
 
     return render(request, 'chat/private_chat.html', context)
+
+
+def delete_message(request, id):
+    try:
+        person = Message.objects.get(id=id)
+        person.delete()
+        return redirect("my_page_url")
+    except Message.DoesNotExist:
+        return HttpResponseNotFound("<h2>Post not found</h2>")

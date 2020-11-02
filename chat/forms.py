@@ -20,6 +20,7 @@ class ChatForm(forms.ModelForm):
     '''
     Форма для создания нового чата
     '''
+    group_name = forms.CharField(required=False)
     class Meta:
         model = Chat
         fields = ('group_name', 'members', 'image_chat')

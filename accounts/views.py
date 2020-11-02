@@ -8,7 +8,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from chat.models import Chat, Message
+from chat.models import Chat, Message, ReadMessage
 from chat.forms import ChatForm
 from django.db.models import Count
 from django.utils.safestring import mark_safe
@@ -161,19 +161,45 @@ def any_user(request, slug):
                     count = 2
                     if count == 2:
                         return redirect('/chat/' + str(room_id))
-            else:
-                if new_chat_form.is_valid():
-                    new_chat_form.instance.creater = request.user
-                    new_chat_form.save()
+            # else:
+            if new_chat_form.is_valid():
+                new_chat_form.instance.creater = request.user
+                # new_chat_form.instance.group_name = request.user.username + any_user.user.username
+                new_chat_form.save()
+                chat_id = new_chat_form.save().id
+                # создание первого сообщения при создании чата
+                message = Message.objects.create(
+                    author=request.user,
+                    recipient=new_chat_form.save(),
+                    content=request.user.profile.first_name + ' открыл с вами чат!'
+                )
+                # создаем запись о чате(для непрочитанных сообщениях) в бд
+                users = new_chat_form.save().members.all()
+                for user in users:
+                    new_data = ReadMessage.objects.create(room_id=chat_id, recipient=user.id, message_id=message.id)
+                    new_data.save()
 
-                    return redirect('chat_url')
-                else:
+                return redirect(f'/chat/{chat_id}')
+            else:
                     HttpResponseNotFound("<h2>Введены неверные данные</h2>")
         else:
             if new_chat_form.is_valid():
                 new_chat_form.instance.creater = request.user
                 new_chat_form.save()
-                return redirect('chat_url')
+                chat_id = new_chat_form.save().id
+                # создание первого сообщения при создании чата
+                message = Message.objects.create(
+                    author=request.user,
+                    recipient=new_chat_form.save(),
+                    content=request.user.profile.first_name + ' открыл с вами чат!'
+                )
+                # создаем запись о чате(для непрочитанных сообщениях) в бд
+                users = new_chat_form.save().members.all()
+                for user in users:
+                    new_data = ReadMessage.objects.create(room_id=chat_id, recipient=user.id, message_id=message.id)
+                    new_data.save()
+
+                return redirect(f'/chat/{chat_id}')
             else:
                 HttpResponseNotFound("<h2>Введены неверные данные</h2>")
     else:

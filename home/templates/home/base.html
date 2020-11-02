@@ -161,11 +161,11 @@ var name = document.getElementsByTagName("title")[0].text;
                   }, 1000);
     }
       if (read_message == 1){
-        $('<div class="card" id="chat_'+id+'" onClick="document.location='+room_id+'">'+read+'</div>').prependTo('#chat-log')
+        $('<div class="card" id="chat_'+id+'" onClick="document.location=`/chat/'+room_id+'/`">'+read+'</div>').prependTo('#chat-log')
         let elem = document.getElementById('new_message1');
         let elem_1 = document.getElementById('new_message2');
-        elem.childNodes[0].data +='+'
-        elem_1.childNodes[0].data +='+'
+        elem.childNodes[0].data +='●'
+        elem_1.childNodes[0].data +='●'
         setTimeout(function()
         {
         $("#chat_"+id).remove();

@@ -64,7 +64,7 @@
         <div id="chat-log" style="height=200px">
         <div class="card" id="chat_{{chat.id}}" onClick="document.location='{{ chat.id }}'" style="height:100px;">
             <div class="media" {% if chat.message.author != request.user and chat.read_message.is_read == False  %}  id="new_message" {% else %} class="media" {% endif %}>
-                <img src="/media/{{ chat.image_chat }}" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
+                <img src="{{ chat.image_chat.url }}.jpg" style="width:100px; padding:5px;" class="mr-3" alt="Не удалось загрузить изображение">
                 <div class="media-body">
                     <h7 class="mt-0">
                         <a href="{{ chat.id }}" style="float:left;">{{ chat.group_name }}</a>

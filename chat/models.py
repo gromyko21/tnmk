@@ -7,7 +7,7 @@ class Chat(models.Model):
     group_name = models.CharField(max_length=50)
     creater = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, verbose_name="Участник", related_name='members', default=User)
-    image_chat = models.ImageField(null=True, blank=True, upload_to="image_chat", verbose_name='Фото беседы')
+    image_chat = models.ImageField(null=True, blank=True, upload_to="image_chat", verbose_name='Фото беседы', default='group_chat')
 
     def __str__(self):
         return self.group_name
