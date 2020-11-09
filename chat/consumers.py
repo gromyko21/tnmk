@@ -54,7 +54,6 @@ class ChatConsumer(WebsocketConsumer):
             except KeyError:
                 try:
                     image_message = data['image']
-                    # image_message = re.split(r'/media/', image_message)[1:]
                     message = Message.objects.create(
                         author=author_user,
                         content=data['message'],
