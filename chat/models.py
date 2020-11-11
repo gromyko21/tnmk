@@ -4,6 +4,9 @@ from django.shortcuts import reverse
 
 
 class Chat(models.Model):
+    '''
+    Класс для создания личных\общих чатов
+    '''
     group_name = models.CharField(max_length=50)
     creater = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, verbose_name="Участник", related_name='members', default=User)
@@ -17,6 +20,9 @@ class Chat(models.Model):
 
 
 class ReadMessage(models.Model):
+    '''
+    Прочитано сообщение или нет
+    '''
     room_id = models.TextField('Id комнаты', max_length=30)
     message_id = models.TextField('Id сообщения', max_length=30)
     recipient = models.TextField('id получателей', max_length=30)
@@ -24,6 +30,9 @@ class ReadMessage(models.Model):
 
 
 class Message(models.Model):
+    '''
+    Класс для создания сообщения
+    '''
     author = models.ForeignKey(User, verbose_name="Отправитель", on_delete=models.CASCADE)
     recipient = models.ForeignKey(Chat, related_name='received_messages', verbose_name="Получатель", on_delete=models.CASCADE)
     content = models.TextField("Сообщение", default='Нет сообщения', max_length=2000)

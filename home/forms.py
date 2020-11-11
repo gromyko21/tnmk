@@ -11,3 +11,20 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('body',)
+
+
+class QuestionForm(forms.ModelForm):
+    """
+    Форма для опросов
+    """
+    class Meta:
+        model = AnswerUser
+        fields = ('answer_id',)
+
+# class AnswerForm(forms.ModelForm):
+#     """
+#     Форма для опросов
+#     """
+#     class Meta:
+#         model = AnswerUser
+#         fields = ('answer',)

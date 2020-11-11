@@ -11,6 +11,23 @@
         <a data-fancybox="gallery" href='{{ articles.image_two.url }}'><img style="width:200px" src="{{ articles.image_two.url }}"></a>
         <a data-fancybox="gallery" href='{{ articles.image_three.url }}'><img style="width:200px" src="{{ articles.image_three.url }}"></a>
       {% endif %}
+      {% if  answer_form == '1' %}
+      <b>{{ question }}</b></br>
+          {% for i in answer %}
+      <p>{{ i }}</p><progress max="{{ votes }}" value="{{ i.votes }}"></progress></br>
+          {% endfor %}
+        {% else %}
+            <form method="POST">
+              {% csrf_token %}
+              <b>{{ question }}</b></br>
+              <input type="hidden" value="answer" name="ans">
+              {% for i in answer %}
+                {{ i }} - <input type="checkbox" name="answerUser" value="{{ i.id }}"></br>
+              {% endfor %}
+              <button type="submit" style="margin-top:1%; margin-bottom:1%; width:100%;" class="btn btn-outline-primary">Добавить</button>
+            </form>
+        {% endif %}
+
     </div>
   <div class="card text-center" >
     <p>{{ articles.text_article }}</p>
