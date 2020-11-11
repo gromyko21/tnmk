@@ -164,8 +164,8 @@ var name = document.getElementsByTagName("title")[0].text;
         $('<div class="card" id="chat_'+id+'" onClick="document.location=`/chat/'+room_id+'/`">'+read+'</div>').prependTo('#chat-log')
         let elem = document.getElementById('new_message1');
         let elem_1 = document.getElementById('new_message2');
-        elem.childNodes[0].data +='●'
-        elem_1.childNodes[0].data +='●'
+        elem.childNodes[0].data ='Моя страница ●'
+        elem_1.childNodes[0].data ='Сообщения ●'
         setTimeout(function()
         {
         $("#chat_"+id).remove();

@@ -12,6 +12,8 @@ from itertools import groupby
 import os
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from .consumers import ChatConsumer
+from django.http import JsonResponse
 
 
 @login_required
@@ -192,6 +194,23 @@ def upload_private_chat(request):
         pass
     return HttpResponse(list)
 
+
+def all_message(request):
+    id_room = request.POST.get('idRoom')
+    skip = int(request.POST.get('skip'))
+    chat = Chat.objects.get(id=id_room)
+    # Является ли пользователь участником чата
+    chat_prov = chat.members.all()
+    list_members = []
+    for x in chat_prov:
+        list_members.append(x)
+    if request.user in chat_prov:
+        messages = Message.objects.order_by('-pk').filter(recipient=chat)[skip:skip+7]
+        consumer = ChatConsumer(1)
+        m_json = consumer.messages_to_json(messages)
+        return HttpResponse(json.dumps(m_json), content_type="application/json")
+    else:
+        pass
 
 # Страница личного чата
 @login_required

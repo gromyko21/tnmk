@@ -18,7 +18,7 @@ class ChatConsumer(WebsocketConsumer):
         chat_id = get_object_or_404(Chat, id=self.room_name)
         count_messages = len(Message.objects.order_by('pk').filter(recipient=chat_id))
         try:
-            messages = Message.objects.order_by('pk').filter(recipient=chat_id)[count_messages-5: count_messages]
+            messages = Message.objects.order_by('pk').filter(recipient=chat_id)[count_messages-7: count_messages]
         except AssertionError:
             messages = Message.objects.order_by('pk').filter(recipient=chat_id)
         count = Chat.objects.filter(id=self.room_name).annotate(Count('members'))

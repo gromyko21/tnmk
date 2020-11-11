@@ -43,7 +43,7 @@ def home(request):
     return render(request, 'home/home.html', data)
 
 
-#Страница для каждой записи
+# Страница для каждой записи
 def articles(request, slug):
     articles = get_object_or_404(Article, slug__iexact=slug)
     question = Question.objects.get(article_id=articles.id)
